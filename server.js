@@ -25,6 +25,7 @@ mongoose
   .connect(dbKey, { useNewUrlParser: true, useCreateIndex: true})
   .then(() => console.log("MongoDB Atlas connected"))
   .catch(err => console.log(err));
+  
 // Use middleware: Passport and perform configuration
 app.use(passport.initialize());
 require('./config/passport')(passport);
@@ -38,5 +39,12 @@ app.use('/api/business', business);
 // Admin API
 app.use('/api/lokals', lokals);
 
+// Serve static assets in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('client/build'));
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+  });
+}
 
 app.listen(port, () => console.log(`Running on PORT:${port}`));
