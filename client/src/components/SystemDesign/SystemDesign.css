@@ -645,7 +645,6 @@ textarea.lk-ip {
   font-size: 0.75rem;
   border-radius: 8px;
   color: rgb(44, 56, 63);
-  min-width: 150px;
   text-align: right;
 }
 .lk-dd-select .disp:hover {
@@ -666,7 +665,7 @@ textarea.lk-ip {
   padding: 0px 0;
   position: fixed;
   top: 45px;
-  right: calc(7.5vw + 164px);
+  right: calc(7.5vw + 167px);
   text-transform: uppercase;
   border-radius: 8px;
   background-color: white;

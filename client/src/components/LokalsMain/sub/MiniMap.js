@@ -88,7 +88,7 @@ export default class MiniMap extends Component {
     params.ty = type;
     params.rad = radius || 1000;
     params.opn = opennow;
-    Axios.get(`/api/business/searchnearuser/${params.kw}/${params.ty}/${location.lat}/${location.lng}/${params.rad}/${params.opn}]`)
+    Axios.get(`/api/business/searchnearuser/${params.kw}/${params.ty}/${location.lat}/${location.lng}/${params.rad}/${params.opn}`)
       .then(res => {
         console.log(res.data);
         return this.setState({

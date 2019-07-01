@@ -5,6 +5,7 @@ h1, h2, h3, h4, h5, div, p, a, body {
 * {
   padding: 0;
   margin: 0;
+  box-sizing: border-box;
 }
 html {
   scroll-behavior: smooth;
@@ -15,6 +16,7 @@ body {
   font-family: 'Montserrat', sans-serif;
   font-family: 'Nato Sans', sans-serif;
   font-family: 'Poppins', sans-serif;
+  font-size: 16px;
 }
 a {
   color: white;

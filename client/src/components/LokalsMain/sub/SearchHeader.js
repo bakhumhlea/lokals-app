@@ -4,9 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 class SearchHeader extends Component {
   render() {
     const { prefKw, prefLc, kw, lc, opn, onChange, onSearch, onClearText } = this.props;
+    console.log('Render');
     return (
       <div className="lokals-search pd-common on-dk"
-        style={{backgroundImage: `url(/images/img-23.jpg)`,backgroundSize: '100%',backgroundPosition: 'center'}}>
+        style={{backgroundImage: `url(/images/img-2.jpg)`,backgroundSize: '100%',backgroundPosition: 'center'}}>
         <h2 className="lokals-slogan">Explore and Experience</h2>
         <div className="lk-wrap-inl lk-search-bar">
           <div className="lk-ip-group keyword ">
@@ -14,8 +15,8 @@ class SearchHeader extends Component {
             onChange={(e)=>onChange(e)}
             value={kw}/>
             <svg className={kw.length===0?"clear-tx hid":"clear-tx"} width="13" height="13" fill="transparent" onClick={(e)=>onClearText(e,'kw')}>
-              <path d="M0 0 L13 13"/>
-              <path d="M0 13 L13 0"/>
+              <path d="M1 1 L12 12"/>
+              <path d="M1 12 L12 1"/>
             </svg>
           </div>
           <div className="lk-ip-group location ">
@@ -23,8 +24,8 @@ class SearchHeader extends Component {
             onChange={(e)=>onChange(e)}
             value={lc}/>
             <svg className={lc.length===0?"clear-tx hid":"clear-tx"} width="13" height="13" fill="transparent" onClick={(e)=>onClearText(e,'lc')}>
-              <path d="M0 0 L13 13"/>
-              <path d="M0 13 L13 0"/>
+              <path d="M1 1 L12 12"/>
+              <path d="M1 12 L12 1"/>
             </svg>
           </div>
           <div className="lk-ip-group submit">

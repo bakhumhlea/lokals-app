@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
 const passport = require('passport');
-const apiKey = require('../../config/keys');
+const apiKeys = require('../../config/keys');
 
 /** @desc Mongoose Model */
 const Profile = require('../../models/Profile');
@@ -15,11 +15,10 @@ const isEmpty = require('../../validation/is-empty');
 /** @desc Utilities */ 
 const APP = require('../../util/app-default-value');
 const { capitalize, strToOfObj, getOpeningHours, byKeyword } = require('../../util/helpers');
-
 const googleMapsClient = require('@google/maps').createClient({
-  key: apiKey.googleMapAPI,
+  key: apiKeys.googleMapAPI,
   Promise: Promise
-});
+})
 
 /**
  * @route GET api/business/search/:business_type/category/:keyword
@@ -429,11 +428,9 @@ router.get('/searchnearby/:keyword/:type/:address/:city/:radius/:opennow', (req,
         opennow: opennow === '',
         type: type,
       };
-      console.log(request);
       googleMapsClient.placesNearby(request)
         .asPromise()
         .then(result => {
-          // console.log(res.json.results);
           return res.json(result.json.results)})
         .catch(err => console.log(err));;
     })
@@ -452,11 +449,9 @@ router.get('/searchnearuser/:keyword/:type/:lat/:lng/:radius/:opennow', (req,res
     opennow: opennow === 'true',
     type: type,
   };
-  console.log(request);
   googleMapsClient.placesNearby(request)
     .asPromise()
     .then(result => {
-      // console.log(res.json.results);
       return res.json(result.json.results)})
     .catch(err => console.log(err));;
 });
@@ -479,4 +474,8 @@ router.get('/getcoordinates/:city/:address',(req,res)=>{
     .catch(err => console.log(err))
 });
 
+router.get('/getphoturi/:ref', (req, res) => {
+  const { ref } = req.params;
+  console.log(apiKeys.googleMapAPI)
+})
 module.exports = router;

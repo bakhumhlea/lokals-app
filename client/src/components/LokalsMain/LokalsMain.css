@@ -1,4 +1,5 @@
 .lokals-main {
+  width: 100vw;
   font-size: 1rem;
 }
 .lokals-search {
@@ -70,7 +71,8 @@
 
 .feed-header,
 .feed-content {
-  width: 100%;
+  width: 100vw;
+  overflow: hidden;
 }
 .feed-header .group {
   width: 100%;
@@ -84,6 +86,7 @@
 }
 .feed-hd-tx {
   font-family: 'Raleway', sans-serif;
+  font-size: 1.4em;
   font-weight: 800;
 }
 .top-feature {
@@ -110,6 +113,7 @@
 }
 .mdl-tt {
   font-family: 'Raleway', sans-serif;
+  font-size: 1.2em;
   font-weight: 800;
   margin-bottom: 15px;
 }
@@ -140,6 +144,7 @@
 }
 .mdl-bound.fture .mdl .dtail-bx .caption {
   font-family: 'Poppins', sans-serif ;
+  font-size: 1.2em;
   font-weight: 700;
 }
 .mdl-bound.fture .mdl .dtail-bx .location {
@@ -165,7 +170,7 @@
   background-color: #192525;
   border: 1px solid rgb(92, 92, 92);
 }
-.redo-minimap {
+.lk-btn.sm.redo-minimap {
   z-index: 10;
   position: absolute;
   top: 15px;
@@ -178,13 +183,13 @@
   box-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.123),
     0 1px 3px 0px rgba(0, 0, 0, 0.123);
 }
-.redo-minimap:hover {
+.lk-btn.sm.redo-minimap:hover {
   color: white;
   background-color: #e97c16;
   border: 2px solid #e97c16;
   transform: translateY(-1px);
 }
-.center-map {
+.lk-btn.sm.center-map {
   z-index: 10;
   position: absolute;
   top: 15px;
@@ -197,11 +202,11 @@
   box-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.123),
     0 1px 3px 0px rgba(0, 0, 0, 0.123);
 }
-.center-map svg {
+.lk-btn.sm.center-map svg {
   stroke: #494949;
   stroke-width: 1.5;
 }
-.center-map:hover {
+.lk-btn.sm.center-map:hover {
   background-color: #e9fcff;
   border: 1px solid #c4c4c4;
   transform: translateY(-1px);
