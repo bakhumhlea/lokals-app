@@ -8,7 +8,8 @@ import { makeTitle } from '../../../util/stringFormat';
 import isEmpty from '../../../util/is-empty'
 
 import CustomMarker from '../../LokalsMap/sub/CustomMarker';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import CustomPopup from '../../LokalsMap/sub/CustomPopup';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const LOKALS_STYLE = 'mapbox://styles/bakhumhlea/cjsp4km8x072o1fmevtwowt5x';
 
@@ -40,7 +41,6 @@ export default class MiniMap extends Component {
   }
   componentDidMount() {
     const { kw, ct, lc } = this.props;
-    const clc = isEmpty(lc)?'downtown':lc;
     const { ty } = this.state;
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
@@ -48,10 +48,12 @@ export default class MiniMap extends Component {
           lat: position.coords.latitude,
           lng: position.coords.longitude
         };
-        this.getNearUser({kw: kw, lc: 'your location'}, location, ty, 1000 , false);
+        this.getNearUser(kw, {address:'your location',type:'none'}, location, ty, 1000 , false);
       });
     } else {
-      this.getNearbyPlaces({kw: kw, lc: clc}, ty, ct, 1000 , false);
+      console.log(lc)
+      const clc = isEmpty(lc)?{address:'financial district',type:'neighborhood'}:lc;
+      this.getNearbyPlaces(kw, clc, ty, ct, 1000 , false);
     }
     this.setState({kw: kw,ct:this.props.ct})
   }
@@ -63,7 +65,7 @@ export default class MiniMap extends Component {
       prevProps.lc !==  lc;
     if (propsChange) {
       this.setState({kw: kw, ct: ct, lc: lc})
-      this.getNearbyPlaces({kw: kw, lc: lc}, ty, ct, 1000, false)
+      this.getNearbyPlaces(kw, lc, ty, ct, 1000, false)
     }
   }
   locateUserLocation(e) {
@@ -81,10 +83,12 @@ export default class MiniMap extends Component {
       });
     }
   }
-  getNearUser(input,location,type,radius,opennow) {
+  getNearUser(keyword,address,location,type,radius,opennow, e) {
+    if (e) e.preventDefault();
+    console.log(type);
     const params = {};
-    params.kw = input.kw;
-    params.lc = input.lc;
+    params.kw = keyword;
+    params.lc = address;
     params.ty = type;
     params.rad = radius || 1000;
     params.opn = opennow;
@@ -92,7 +96,7 @@ export default class MiniMap extends Component {
       .then(res => {
         console.log(res.data);
         return this.setState({
-          lc: params.lc,
+          lc: address,
           markers: res.data,
           cUserLc: {
             lat: location.lat, 
@@ -115,12 +119,12 @@ export default class MiniMap extends Component {
       })
       .catch(err => console.log({error:'Error!'}))
   }
-  getNearbyPlaces(input, type, city, radius, opennow) {
-    // console.log(input)
+  getNearbyPlaces(keyword, location, type, city, radius, opennow) {
+    // console.log(type)
     const params = {};
-    params.kw = input.kw;
+    params.kw = keyword;
     params.ty = type;
-    params.lc = !isEmpty(input.lc) ? input.lc : 'downtown';
+    params.lc = !isEmpty(location) ? location : {address:'financial district',type:'neighborhood'};
     params.rad = radius || 1000;
     params.opn = opennow;
     params.ct = city;
@@ -149,10 +153,6 @@ export default class MiniMap extends Component {
       .catch(err => console.log({error: 'An unknown error occor!'}));
   }
   handleViewportChange(viewport) {
-    // this.getCurrentMapCenter({
-    //   lat: viewport.latitude, 
-    //   lng: viewport.longitude
-    // }, viewport.zoom)
     this.setState({
       cMapCen: {
         lat: viewport.latitude, 
@@ -168,21 +168,32 @@ export default class MiniMap extends Component {
       searchRadius: searchRadius
     });
   }
+  onHoverMarker(index,e) {
+    if(e) e.preventDefault();
+    this.setState({
+      selectedMarker: index
+    });
+  }
   render() {
-    const { mapviewport, kw, lc, ct, type, opennow, 
-      markers, cMapCen, cSearchCen, searchRadius } = this.state;
+    const { mapviewport, kw, lc, ct, ty, opennow, 
+      markers, cMapCen, cSearchCen, searchRadius, selectedMarker } = this.state;
     return (
       <div className="mdl-bound mini-map">
-        <h5 className="mdl-tt flx al-c">
-          <Link to="/explore" className="lk-link"><span className="mr-3">Explorer</span></Link>
-          <span className="lk-btn btn-war sm tx-cap mr-2">{makeTitle(ct)}</span>
-          <span className="lk-btn-ol sm tx-cap mr-2">{makeTitle(kw)}</span>
-          { cMapCen && cMapCen.lat === cSearchCen.lat && (<span className="lk-btn-ol sm tx-cap mr-2">{makeTitle(lc)}</span>)}
+        <h5 className="mdl-tt flx al-c jt-spbt">
+          <div className="flx al-c">
+            <Link to="/explore" className="lk-link mr-2"><span>Explorer</span></Link>
+            <FontAwesomeIcon icon={['fab', 'google']} className="ic on-l gg mr-3"/>
+          </div>
+          <div className="flx al-c">
+            <span className="lk-btn btn-war sm tx-cap mr-2">{makeTitle(ct)}</span>
+            <span className="lk-btn-ol sm tx-cap mr-2">{makeTitle(kw)}</span>
+            { cMapCen && cMapCen.lat === cSearchCen.lat && (<span className="lk-btn-ol sm tx-cap">{makeTitle(lc.address)}</span>)}
+          </div>
         </h5>
         <div className="mdl">
           { cMapCen && cMapCen.lat !== cSearchCen.lat && (
             <div className="lk-btn sm redo-minimap"
-              onClick={(e)=>this.getNearUser({kw: kw, lc: 'financial district'}, {lat:mapviewport.latitude,lng:mapviewport.longitude}, type, searchRadius , opennow)}>
+              onClick={(e)=>this.getNearUser(kw,{address:'financial district',type: 'neighborhood'}, {lat: mapviewport.latitude,lng: mapviewport.longitude}, ty, searchRadius , opennow, e)}>
               Redo Search
             </div>
           )}
@@ -227,16 +238,28 @@ export default class MiniMap extends Component {
                 <circle cx="10" cy="10" r="7"/>
               </svg>
             </Marker>) }
+            {markers && markers.length > 0 && markers.map((marker,i)=>(
+              <CustomPopup 
+                key={i}
+                popupId={i}
+                longitude={marker.geometry.location.lng} 
+                latitude={marker.geometry.location.lat} 
+                data={marker} 
+                selectedPopup={selectedMarker === i} 
+                offset={{x:-3,y:-40}}
+              />
+            ))}
             { markers && markers.length > 0 && markers.map((marker,i)=>(
               <CustomMarker
                 key={i}
                 markerID={i}
+                selectedMarker={selectedMarker === i}
                 showMarkerNumber={true}
                 data={marker}
                 offset={{x:-15,y:-30}}
                 latitude={marker.geometry.location.lat}
                 longitude={marker.geometry.location.lng}
-                onHoverMarker={() => console.log("Hover")}
+                onHoverMarker={(index,e) => this.onHoverMarker(index,e)}
                 onClickMarker={() => console.log("Click")}
               />
             ))}

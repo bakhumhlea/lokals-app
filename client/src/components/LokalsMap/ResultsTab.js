@@ -33,7 +33,7 @@ export default class ResultsTab extends Component {
               { !markers? (
                 <div className="wd-10 empty-result">
                   <Spinner 
-                    spinnerStyle={{
+                    cssStyle={{
                       top: '50%',
                       right: '0',
                       width: '100%',

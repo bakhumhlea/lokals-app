@@ -43,7 +43,7 @@ const BusinessSchema = new Schema({
   about: {
     type: String
   },
-  images: [
+  photos: [
     {
       url: {
         type: String,
@@ -54,6 +54,21 @@ const BusinessSchema = new Schema({
       }
     }
   ],
+  cover_photo: {
+    photo_reference: {
+      type: String
+    },
+    height: {
+      type: Number
+    },
+    width: {
+      type: Number
+    },
+    third_party: {
+      type: Boolean,
+      default: false
+    }
+  },
   formatted_address: {
     type: String,
     required: true

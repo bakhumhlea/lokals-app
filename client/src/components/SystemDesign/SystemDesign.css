@@ -499,7 +499,8 @@ span.label-1 {
 }
 /* tab */
 .dark-th .lk-link,
-.dark-th .lk-tab-link {
+.dark-th .lk-tab-link,
+.on-dk .lk-link {
   color: white;
 }
 .lk-link.solo {
@@ -925,6 +926,12 @@ ul.inl-contn li {
 }
 .flx {
   display: flex;
+}
+.flx.di-col {
+  flex-direction: column;
+}
+.flx.di-row {
+  flex-direction: row;
 }
 .flx.al-c {
   align-items: center;

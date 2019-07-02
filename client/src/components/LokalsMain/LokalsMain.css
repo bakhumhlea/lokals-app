@@ -74,19 +74,24 @@
   width: 100vw;
   overflow: hidden;
 }
+.feed-content.result {
+  background: #e2fffc;
+  border-bottom: 1px solid #c9c9c9;
+}
 .feed-header .group {
   width: 100%;
   margin: 10px auto 20px auto;
 }
 .time-disp {
   display: inline-block;
-  font-size: 1.4em;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.6em;
   font-weight: 700;
   margin-bottom: 5px;
 }
 .feed-hd-tx {
   font-family: 'Raleway', sans-serif;
-  font-size: 1.4em;
+  font-size: 1.8em;
   font-weight: 800;
 }
 .top-feature {
@@ -95,18 +100,20 @@
 }
 .comm-feature {
   width: 100%;
-  margin: 10px auto 10px auto;
+  margin: 15px auto 10px auto;
 }
 .hlite-feature {
   width: 100%;
-  margin: 0px auto 20px auto;
-  padding-top: 20px;
+  margin: 0px auto 0px auto;
+  padding-top: 25px;
+  box-sizing: border-box;
 }
 .mdl-bound {
   height: 100%;
 }
 .mdl-bound.fture {
-  width: 58%;
+  width: 45%;
+  min-width: 475px;
 }
 .mdl {
   border-radius: 15px;
@@ -115,49 +122,105 @@
   font-family: 'Raleway', sans-serif;
   font-size: 1.2em;
   font-weight: 800;
+  height: 24px;
   margin-bottom: 15px;
 }
 .mdl-bound.fture .mdl {
+  position: relative;
   height: 320px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+.mdl-bound.fture .mdl::-webkit-scrollbar {
+  display: none;
+}
+.mdl-bound.fture .mdl .story-display {
+  width: 100%;
+  height: 100%;
+  margin-right: 10px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
-.mdl-bound.fture .mdl .img-cont {
-  height: 63%;
+.mdl-bound.fture .mdl .story-display .img-cont {
+  height: 100%;
   padding: 15px;
-  border-radius: 15px 15px 6px 6px;
+  border-radius: 15px 15px 0px 0px;
   border: 1px solid rgba(0,0,0,0.3);
 }
-.mdl-bound.fture .mdl .img-cont .top-els {
+.mdl-bound.fture .mdl .story-display .img-cont .top-els {
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 0.9em;
   font-weight: 900;
 }
-.mdl-bound.fture .mdl .dtail-bx {
+.mdl-bound.fture .mdl .story-display .dtail-bx {
   padding: 10px 15px;
   height: 35%;
-  border-radius: 6px 6px 15px 15px;
+  border-radius: 0px 0px 15px 15px;
   border: 1px solid rgba(0,0,0,0.3);
 }
-.mdl-bound.fture .mdl .dtail-bx .caption {
+.mdl-bound.fture .mdl .story-display .dtail-bx .caption {
   font-family: 'Poppins', sans-serif ;
-  font-size: 1.2em;
+  font-size: 1.4em;
   font-weight: 700;
+  margin-bottom: 5px;
 }
-.mdl-bound.fture .mdl .dtail-bx .location {
+.mdl-bound.fture .mdl .story-display .dtail-bx .location {
   font-family: 'Poppins', sans-serif ;
   font-size: 0.9em;
   font-weight: 400;
   margin-bottom: 8px;
 }
-.mdl-bound.fture .mdl .dtail-bx .location .place {
+.mdl-bound.fture .mdl .story-display .dtail-bx .location .place {
   font-weight: 600;
 }
+.mdl-bound.fture .mdl .story-thumbs {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 100px;
+  height: 100%;
+  margin-left: 10px;
+  /* border: 1px solid rgb(92, 92, 92); */
+  overflow-y: scroll;
+}
+.mdl-bound.fture .mdl .story-thumbs .fade-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-width: 100px;
+  height: 25%;
+  background: linear-gradient(white white top bottom);
+}
+.mdl-bound.fture .mdl .story-thumbs .thumbnail {
+  width: 80px;
+  min-height: 100px;
+  height: 120px;
+  text-align: center;
+}
+.mdl-bound.fture .mdl .story-thumbs .thumbnail .img {
+  height: 70px;
+  width: 70px;
+  border-radius: 100px;
+  border: 3px solid rgb(255, 255, 255);
+  box-shadow: 0 0 8px 0 rgba(75, 75, 75, 0.2);
+}
+.mdl-bound.fture .mdl .story-thumbs .thumbnail .text {
+  display: block;
+  width: 100%;
+  margin: auto;
+  font-size: 0.7em;
+}
+
 .mdl-bound.mini-map {
-  width: 40%;
+  width: 55%;
 }
 .mdl-bound.mini-map .mdl {
   position: relative;
@@ -175,6 +238,8 @@
   position: absolute;
   top: 15px;
   right: 65px;
+  /* height: 35px; */
+  font-size: 0.75em;
   font-weight: 500;
   text-transform: uppercase;
   color: white;
@@ -187,7 +252,7 @@
   color: white;
   background-color: #e97c16;
   border: 2px solid #e97c16;
-  transform: translateY(-1px);
+  /* transform: translateY(-1px); */
 }
 .lk-btn.sm.center-map {
   z-index: 10;
@@ -209,7 +274,7 @@
 .lk-btn.sm.center-map:hover {
   background-color: #e9fcff;
   border: 1px solid #c4c4c4;
-  transform: translateY(-1px);
+  /* transform: translateY(-1px); */
 }
 .mdl-bound.sugg-list .mdl {
   height: 330px;
@@ -223,9 +288,9 @@
 
 /* common */
 .line-sep-h {
-  height: 2px;
+  height: 4px;
   width: 30%;
-  background: black;
+  background: rgb(3, 184, 84);
   margin: 20px 0;
 }
 .dark-th .line-sep-h {
@@ -260,7 +325,7 @@
 .ic.on-r {
   margin-left: 6px;
 }
-.lk-tag-btn.sm .ic {
-  font-size: 0.7em;
+.ic.gg {
+  color: #528df8;
 }
 /* commmon */

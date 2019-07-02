@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 class SearchHeader extends Component {
   render() {
     const { prefKw, prefLc, kw, lc, opn, onChange, onSearch, onClearText } = this.props;
-    console.log('Render');
     return (
       <div className="lokals-search pd-common on-dk"
         style={{backgroundImage: `url(/images/img-2.jpg)`,backgroundSize: '100%',backgroundPosition: 'center'}}>

@@ -72,7 +72,7 @@ router.get('/business/get-profile-by/:id', (req,res) => {
       businessFields.google_rating = data.rating;
 
       businessFields.price = {};
-      businessFields.price.level = data.price_level;
+      businessFields.price.level = data.price_level ? data.price_level : 0;
 
       businessFields.socials = {};
       businessFields.socials.website = data.website;
@@ -92,7 +92,8 @@ router.get('/business/get-profile-by/:id', (req,res) => {
       const addressObj = keys.reduce((obj, key, i) => Object.assign(obj, {[key]:addressFields[i]}), {})
       businessFields.address = addressObj;
       businessFields.photos = data.photos;
-      
+      businessFields.cover_photo = data.photos[0];
+      console.log(businessFields);
       return res.json(businessFields);
     })
     .catch(err => res.json(err));
@@ -116,11 +117,11 @@ router.post('/business/add',(req, res) => {
   //   return res.status(400).json(errors);
   // }
   // console.log(req.body.google_place_id);
-  if (req.body.password !== apiKey.adminKey) {
-    console.log(req.body.password !== apiKey.adminKey);
-    console.log('password required');
-    return res.status(400).json({password: isEmpty(req.body.password)? 'Password Required':'Incorrect Password'});
-  }
+  // if (req.body.password !== apiKey.adminKey) {
+  //   console.log(req.body.password !== apiKey.adminKey);
+  //   console.log('password required');
+  //   return res.status(400).json({password: isEmpty(req.body.password)? 'Password Required':'Incorrect Password'});
+  // }
   const businessFields = {};
   
   if (req.body.businessdata.business_name) businessFields.business_name = req.body.businessdata.business_name.trim();
@@ -136,6 +137,12 @@ router.post('/business/add',(req, res) => {
   if (req.body.businessdata.location) businessFields.location = req.body.businessdata.location;
   if (req.body.businessdata.opening_hours) businessFields.opening_hours = req.body.businessdata.opening_hours.split(',').map(el => getOpeningHours(el.trim()));
   if (req.body.businessdata.address) businessFields.address = req.body.businessdata.address;
+  // console.log(req.body.photos);
+  if (req.body.businessdata.cover_photo) {
+    let cover_photo = req.body.businessdata.cover_photo;
+    cover_photo.third_party = true;
+    businessFields.cover_photo = cover_photo;
+  };
 
   Business.findOne({ google_place_id: req.body.businessdata.google_place_id })
     .then(business => {
@@ -144,13 +151,14 @@ router.post('/business/add',(req, res) => {
         errors.message = `${req.body.businessdata.business_name}'s profile is already existed`;
         return res.status(400).json(errors);
       }
-      new Business(businessFields)
-        .save()
+      var newBusiness = new Business(businessFields);
+      newBusiness.save()
         .then(business => {
+          console.log(business);
           // create photo refs
           const photoRefFields = {};
           const business_id = business._id;
-          const { photos } = req.body; //array
+          const { photos } = req.body.businessdata; //array
           console.log(photos);
           photoRefFields.business = business_id; //string
           photoRefFields.photos = photos;

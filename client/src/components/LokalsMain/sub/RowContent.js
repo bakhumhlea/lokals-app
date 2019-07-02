@@ -5,15 +5,9 @@ import Axios from 'axios';
 // import { switchIcon } from '../../../util/switchIcon';
 import isEmpty from '../../../util/is-empty'
 import './RowContent.css';
-import ContentCard from './ContentCard';
+// import ContentCard from './ContentCard';
+import LokalsCard from './LokalsCard';
 
-// function getImgUrl(ref) {
-//   var randomNum = Math.floor(Math.random() * (31 - 23)) + 23;
-//   console.log(randomNum);
-//   const num = randomNum.toString();
-//   return `/images/img-${num}.jpg`;
-//   // return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${ref}&key=${GOOGLE_MAP_API}`;
-// }
 class RowContent extends Component {
   state = {
     moveRight: 0,
@@ -25,9 +19,8 @@ class RowContent extends Component {
   }
   componentDidMount() {
     const { searchInput, ct, autoMount } = this.props;
-    // console.log(searchInput);
     if (autoMount) {
-      this.getNearbyPlaces(searchInput, ct, 1000, false)
+      this.queryBusinesses(searchInput.kw,searchInput.lc,ct);
     } else {
       this.setState({
         data: this.props.data
@@ -36,17 +29,26 @@ class RowContent extends Component {
   }
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.ct !== this.props.ct) {
-      const { ct, ckw } = this.props;
-      // const searchInput = { kw:ckw, lc:clc }
-      console.log(ckw)
-      this.getNearbyPlaces({ kw:ckw, lc: '' }, ct, 1000, false)
+      const { ct, clc, ckw } = this.props;
+      this.queryBusinesses(ckw,clc,ct);
     } else if (prevProps.data !== this.props.data) {
-      console.log(this.props.data)
       this.setState({
         data: this.props.data
       });
     }
   }
+  queryBusinesses(keyword, location, city) {
+    Axios.get(`/api/business/querybusinesses/categories/${keyword.join(',')}/${location.address}/${location.type}/${city}`)
+      .then(res => {
+        return this.setState({
+          searchInput: keyword,
+          data: res.data, 
+          searchResults: res.data
+        });
+      })
+      .catch(err => { if (err) console.log({error: err.response})});
+  }
+  
   getNearbyPlaces(input, city, radius, opennow) {
     const params = {};
     params.kw = input.kw.join(' ');
@@ -83,60 +85,12 @@ class RowContent extends Component {
         <div className="section-content" style={{transform: `translateX(${this.state.translate}%)`}}>
           {data.map((d, i) => (
             <span style={{width: `${100/col}%`}} key={i} className="chain-container">
-              <ContentCard
+              <LokalsCard
                 index={i}
                 data={d}
                 following={following}
                 onDark={onDark}
               />
-              {/* <div className={`card-container sm`}> 
-                <div className="top-info"
-                  id={d.photos && d.photos[0].photo_reference}
-                  style={ d.photos &&
-                    { 
-                      backgroundImage: `url(${getImgUrl(d.photos[0].photo_reference)})`,
-                      backgroundSize: (d.photos[0].width / d.photos[0].height > 1.34) ? `auto 100%`:`100% auto`
-                    }
-                  }
-                >
-                  <div className="biz-type">
-                    Wine Bar
-                  </div>
-                  <div className="card-buttons">
-                    <span className={`lk-tag-btn sm rm-m on-img ${following.includes(i)?"selected":""} ${onDark?"on-dk":""}`}
-                      onClick={(e)=>this.setState({following:following.concat(i)})}
-                    >
-                      <span>{following.includes(i)?'Following':'Follow'}</span>
-                      <FontAwesomeIcon icon={following.includes(i)?"check":"plus"} className="ic on-r"/>
-                    </span>
-                  </div>
-                </div>
-                <div className="footer-info">
-                  <h6 className="desc head flx jt-spbt al-st">
-                    <span className="name">{d.name?d.name:'Business Name'}
-                    </span>
-                  </h6>
-                  <p className="desc first">
-                    <FontAwesomeIcon icon="map-marker-alt" className="ic on-l"/>
-                    <span className="st">{d.vicinity}</span>
-                    <span>, </span>
-                    <span className="nbhood">Cow Hollow</span>
-                  </p>
-                  <p className="desc second flx jt-spbt">
-                    <span className="dist">
-                      <FontAwesomeIcon icon="utensils" className="ic on-l"/>
-                      <span>{d.types && d.types[0]}</span>
-                      <span> • </span>
-                      <span className="pri-cus">{'$'.repeat(d.price_level)}</span>
-                    </span>
-                    <span className="rating">
-                      <FontAwesomeIcon icon="thumbs-up" className="ic on-l"/>
-                      <span>{d.user_ratings_total}</span>
-                    </span> 
-                  </p>
-                </div>
-                <div className="vignette bottom"></div>
-              </div> */}
             </span>
           ))}
         </div>

@@ -144,7 +144,7 @@ class BOHBusinesses extends Component {
         return (
           <div>
             {Object.entries(value).map((pair,n)=>(
-              <div className="body-1 flx-contn" key={n}>
+              <div className="body-1 flx" key={n}>
                 <span>{pair[0].split('_').join(' ').substr(0,1).toUpperCase()+pair[0].split('_').join(' ').substr(1)}: </span>
                 <input
                   className="lk-ip-typing" 
@@ -168,7 +168,7 @@ class BOHBusinesses extends Component {
       } else if (type === 'type-2') {
         return (
           <div className="body-1">
-            <span>{Object.keys(value)[0].split('_').join(' ').substr(0,1).toUpperCase()+Object.keys(value)[0].split('_').join(' ').substr(1)}: </span>
+            <span>{ Object.keys[0] && Object.keys(value)[0].split('_').join(' ').substr(0,1).toUpperCase()+Object.keys(value)[0].split('_').join(' ').substr(1)}: </span>
             <a className="lk-link solo" href={value.website} rel="noopener noreferrer" target="_blank">{value.website}</a>
           </div>
         )
@@ -182,13 +182,17 @@ class BOHBusinesses extends Component {
         return (
           <div>
             {value.map((v,n)=>(
-            <div className="body-1 flx-contn" key={n}>
-              <div className="obj-img">
+            <div className="body-1 flx" key={n}>
+              <div className="obj-img" onClick={(e)=>this.setState({marker: {
+                  ...this.state.marker,
+                  cover_photo: v
+                }})}>
                 <img 
                   style={{ width: `100%`}}
                   src={`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${v.photo_reference}&key=${GOOGLE_MAP_API}`} alt={"Good Job"}
                 />
-                <div className="img-ctr-btn flx-contn">
+                <div className="img-ctr-btn flx">
+                  { v.photo_reference === this.state.marker.cover_photo.photo_reference && (<button className="lk-btn btn-suc sm"><FontAwesomeIcon icon="check-circle"/></button>)}
                   <button className="lk-btn btn-dan sm" onClick={(e)=>this.deleteObject(parentkey,n,e)}><FontAwesomeIcon icon="trash"/></button>
                 </div>
               </div>
@@ -199,7 +203,7 @@ class BOHBusinesses extends Component {
         return (
           <div>
             {Object.entries(value).map((pair,n)=>(
-            <div className="body-1 flx-contn wd-10 jt-spbt" key={n}>
+            <div className="body-1 flx wd-10 jt-spbt" key={n}>
               <input 
                 className="lk-ip-typing wd-9" 
                 name='keyword' 
@@ -330,7 +334,7 @@ class BOHBusinesses extends Component {
               <input type="text" placeholder="type" name="type" className="lk-ip" value={type} onChange={e=>this.setState({[e.target.name]:e.target.value})}/>
             </div>
             <div className="lk-ip-group">
-              <label className="label-1 flx-contn jt-spbt"><small>Radius (meter)</small><small>{radius} m</small></label>
+              <label className="label-1 flx jt-spbt"><small>Radius (meter)</small><small>{radius} m</small></label>
               <input type="range" name="radius" min="200" max="1000" className="lk-ip-range" value={radius} onChange={e=>this.setState({[e.target.name]:e.target.value})}/>
             </div>
             <button className="lk-btn btn-pri wd-10" onClick={(e)=>this.onSearchCurrentCenter(e)}>
@@ -345,7 +349,7 @@ class BOHBusinesses extends Component {
               { markers.length !== 0 ? markers.map((m,i)=>(
                 <div className={(selected === m.place_id)?"lk-card wrap-link mini selected":"lk-card wrap-link mini"} key={m.place_id} onClick={(e)=>this.getBusinessData(m.place_id, e)}>
                   <p className="body-1"><strong>{m.name}</strong></p>
-                  <p className="body-1"><small>{m.rating} ({m.user_ratings_total})| {Array.from(Array(m.price_level)).map(v=>'$').join('')}</small></p>
+                  <p className="body-1"><small>{m.rating} ({m.user_ratings_total})| {m.price_level>0?'$'.repeat(m.price_level):'N/A'}</small></p>
                   <p className="body-1"><small>{m.vicinity}</small></p>
                   <p className="body-1"><small>{m.types.map(t => t.split('_').join(' ').substr(0,1).toUpperCase()+t.split('_').join(' ').substr(1)).join(', ')}</small></p>
                 </div>
@@ -380,7 +384,7 @@ class BOHBusinesses extends Component {
                   )}
                   {typeof pair[1] === 'object' && 
                     Object.entries(pair[1]).map((el,n)=>(
-                      <div className="body-1 flx-contn" key={n}>
+                      <div className="body-1 flx" key={n}>
                         {this.urlCheck(el[0],el[1],pair[0])}
                       </div>
                     )

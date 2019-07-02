@@ -16,16 +16,16 @@ import './LokalsMain.css'
 
 const DUMMY_USER = {
   pref: {
-    areas: ['Valencia Street', 'Cow Hollow', 'Nob Hill', 'SOMA'],
-    kws: ['Larb', 'Japanese', 'Wine', 'Pasta', 'Coffee Shop', 'Ramen'],
+    areas: ['Financial District', 'Cow Hollow', 'Nob Hill', 'SOMA'],
+    kws: ['Thai', 'Japanese', 'Wine', 'Pasta', 'Coffee', 'Ramen'],
     local: 'san francisco'
   }
 }
 const DUMMY_FEEDING = [
-  { title: "Bon Appetit!", kw: ['French', 'Fine Ding'], lc: 'Chinatown' },
-  { title: "Wine Bars are all Around", kw: ['Wine Bar'], lc: 'SOMA' },
-  { title: "We can Sushi all day", kw: ['sushi', 'japanese'], lc: 'Financial District' },
-  { title: "Drink don't Drive", kw: ['Bar'], lc: 'Valencia Street' }
+  { title: "Bon Appetit!", kw: ['French'], lc: {address: 'financial district',type:'neighborhood'} },
+  { title: "Wine Bars are all Around", kw: ['Wine'], lc: {address: 'all',type:'none'} },
+  { title: "Sushi all day", kw: ['japanese'], lc: {address: 'all',type:'none'} },
+  { title: "Drink hard, Play hard but Don't drive", kw: ['Bar'], lc: {address: 'all',type:'none'} }
 ]
 class LokalsMain extends Component {
   state = {
@@ -42,7 +42,10 @@ class LokalsMain extends Component {
     opn: false,
     searchResults: [],
     currentKw: 'all',
-    currentLc: '',
+    currentLc: {
+      address: 'Financial District',
+      type: 'neighborhood'
+    },
     userprefLc: null,
     
   }
@@ -58,6 +61,19 @@ class LokalsMain extends Component {
         ct: this.props.app.local.city
       })
     }
+  }
+  queryBusinesses(keyword, location, city) {
+    Axios.get(`/api/business/querybusinesses/categories/${keyword}/${location.address}/${location.type}/${city}`)
+      .then(res => {
+        return this.setState({
+          markers: res.data, 
+          searchResults: res.data,
+          currentKw: keyword,
+          currentLc: location,
+          currentCenter: location
+        });
+      })
+      .catch(err => { if (err) console.log({error: err.response})});
   }
   getNearbyPlaces(keyword, type, location, radius, opennow) {
     // const sf = {lat: 37.7749, lng: -122.4194};
@@ -95,8 +111,13 @@ class LokalsMain extends Component {
   }
   onSearch(e) {
     e.preventDefault();
-    const { lc, kw, opn } = this.state;
-    this.getNearbyPlaces(kw,'restaurant',lc,1000,opn);
+    const { lc, kw, ct } = this.state;
+    if (isEmpty(lc)) {
+      this.queryBusinesses(kw, {address: 'all', type: 'none'}, ct)
+    } else {
+      this.queryBusinesses(kw, {address: lc, type: 'neighborhood'}, ct)
+    }
+    
   }
   render() {
     const { darkTheme, kw, lc, ct, opn, searchResults, currentKw, currentLc } = this.state;
@@ -114,17 +135,18 @@ class LokalsMain extends Component {
             lc={lc}
             opn={opn}
             onChange={(e, value)=>this.onChange(e, value)}
+            onChangeAddress={(e)=>this.onChangeAddress(e)}
             onClearText={(e, key)=>this.onClearText(e,key)}
             onSearch={(e)=>this.onSearch(e)}
           />
           <div className="lokals-feed">
             { searchResults.length > 0 && (
-              <div className="feed-content pd-common">
+              <div className="feed-content pd-common result">
                 <div className="comm-feature">
                   <div className="mdl-bound sugg-list">
                     <h5 className="mdl-tt flx al-c">
-                      <span className="mr-3">{currentKw.toLowerCase() === 'larb'?`I "${currentKw}" You!`:`Results for ${currentKw}`}</span>
-                      <span className="lk-btn btn-war sm tx-cap mr-2">{currentLc}</span>
+                      <span className="mr-3">{`Results for ${currentKw}`}</span>
+                      <span className="lk-btn btn-war sm tx-cap mr-2">{currentLc.address}</span>
                       <span className="lk-btn-ol sm tx-cap mr-2">{currentKw}</span>
                     </h5>
                     <div className="mdl">
@@ -164,8 +186,8 @@ class LokalsMain extends Component {
               <div className="comm-feature">
                 <div className="mdl-bound sugg-list">
                   <h5 className="mdl-tt flx al-c">
-                    <span className="mr-3">{makeTitle(DUMMY_FEEDING[0].title)}</span>
-                    <span className="lk-btn btn-war sm tx-cap mr-2">{makeTitle(DUMMY_FEEDING[0].lc)}</span>
+                    <span className="mr-3">{DUMMY_FEEDING[0].title}</span>
+                    <span className="lk-btn btn-war sm tx-cap mr-2">{makeTitle(DUMMY_FEEDING[0].lc.address)}</span>
                     {DUMMY_FEEDING[0].kw.map((k,i)=>(
                       <div style={{display: 'inline-block'}} key={i}>
                         <span className="lk-btn-ol sm tx-cap mr-2">{makeTitle(k)}</span>
@@ -175,6 +197,7 @@ class LokalsMain extends Component {
                   <div className="mdl">
                     <RowContent
                       col="4"
+                      clc={DUMMY_FEEDING[0].lc}
                       ct={app.local.city}
                       ckw={DUMMY_FEEDING[0].kw}
                       autoMount={true}
@@ -184,8 +207,8 @@ class LokalsMain extends Component {
                 </div>
                 <div className="mdl-bound sugg-list">
                   <h5 className="mdl-tt flx al-c">
-                    <span className="mr-3">{makeTitle(DUMMY_FEEDING[1].title)}</span>
-                    <span className="lk-btn btn-war sm tx-cap mr-2">{makeTitle(DUMMY_FEEDING[1].lc)}</span>
+                    <span className="mr-3">{DUMMY_FEEDING[1].title}</span>
+                    <span className="lk-btn btn-war sm tx-cap mr-2">{makeTitle(DUMMY_FEEDING[1].lc.address)}</span>
                     {DUMMY_FEEDING[1].kw.map((k,i)=>(
                       <div style={{display: 'inline-block'}} key={i}>
                         <span className="lk-btn-ol sm tx-cap mr-2">{makeTitle(k)}</span>
@@ -196,6 +219,7 @@ class LokalsMain extends Component {
                     <RowContent
                       col="4"
                       ct={app.local.city}
+                      clc={DUMMY_FEEDING[1].lc}
                       ckw={DUMMY_FEEDING[1].kw}
                       autoMount={true}
                       searchInput={DUMMY_FEEDING[1]}
@@ -204,27 +228,28 @@ class LokalsMain extends Component {
                 </div>
               </div>          
             </div>
-            <div className="feed-content on-dk">
+            <div className="feed-content on-dk mb-2">
               <div className="hlite-feature pd-common">
                 <div className="mdl-bound sugg-list">
                   <h5 className="mdl-tt flx al-c">
-                    <span className="mr-4">{makeTitle(DUMMY_FEEDING[2].title)}</span>
-                    <span className="lk-btn btn-dan md mr-2">
+                    <span className="mr-4">{DUMMY_FEEDING[2].title}</span>
+                    <span className="lk-btn btn-dan sm mr-2">
                       <FontAwesomeIcon icon="star" className="ic on-l"/>
                       Highly Recommend
                     </span>
-                    <span className="lk-btn btn-war md mr-2">{makeTitle(DUMMY_FEEDING[2].lc)}</span>
+                    <span className="lk-btn btn-war sm mr-2">{makeTitle(DUMMY_FEEDING[2].lc.address)}</span>
                     {DUMMY_FEEDING[2].kw.map((k,i)=>(
                       <div style={{display: 'inline-block'}} key={i}>
-                        <span className="lk-btn-ol md tx-cap mr-2">{makeTitle(k)}</span>
+                        <span className="lk-btn-ol sm tx-cap mr-2">{makeTitle(k)}</span>
                       </div>
                     ))}
                   </h5>
                   <div className="mdl">
                     <RowContent
-                      col="3"
+                      col="4"
                       onDark={true}
                       ct={app.local.city}
+                      clc={DUMMY_FEEDING[2].lc}
                       ckw={DUMMY_FEEDING[2].kw}
                       autoMount={true}
                       searchInput={DUMMY_FEEDING[2]}
@@ -237,8 +262,8 @@ class LokalsMain extends Component {
               <div className="comm-feature">
                 <div className="mdl-bound sugg-list">
                   <h5 className="mdl-tt flx al-c">
-                    <span className="mr-3">{makeTitle(DUMMY_FEEDING[3].title)}</span>
-                      <span className="lk-btn btn-war sm tx-cap mr-2">{makeTitle(DUMMY_FEEDING[3].lc)}</span>
+                    <span className="mr-3">{DUMMY_FEEDING[3].title}</span>
+                      <span className="lk-btn btn-war sm tx-cap mr-2">{makeTitle(DUMMY_FEEDING[3].lc.address)}</span>
                     {DUMMY_FEEDING[3].kw.map((k,i)=>(
                       <div style={{display: 'inline-block'}} key={i}>
                         <span className="lk-btn-ol sm tx-cap mr-2">{makeTitle(k)}</span>
@@ -249,6 +274,7 @@ class LokalsMain extends Component {
                     <RowContent
                       col="4"
                       ct={app.local.city}
+                      clc={DUMMY_FEEDING[3].lc}
                       ckw={DUMMY_FEEDING[3].kw}
                       autoMount={true}
                       searchInput={DUMMY_FEEDING[3]}

@@ -257,14 +257,14 @@ class ExploreMap extends Component {
               >
                 <FontAwesomeIcon icon="heart"/>
               </button>
-              <button
+              {/* <button
                 type="button"
                 className={activeTab==='exp_filt'?"lk-btn active":"lk-btn"} 
                 name="exp_filt" 
                 onClick={(e)=>this.onClickOpenTab('exp_filt', e)}
               >
                 <FontAwesomeIcon icon="filter"/>
-              </button>
+              </button> */}
             </div>
           </div>
           <div className="explorer-cons sha-1">
@@ -391,7 +391,7 @@ class ExploreMap extends Component {
         {!mapviewport.latitude ? 
         <div className="map-contn">
           <Spinner
-            spinnerStyle={{
+            cssStyle={{
               top: '50%',
               right: '0',
               width: '100%',

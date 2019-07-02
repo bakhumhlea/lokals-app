@@ -7,6 +7,7 @@ const apiKeys = require('../../config/keys');
 /** @desc Mongoose Model */
 const Profile = require('../../models/Profile');
 const Business = require('../../models/Business');
+const GooglePhotoRef = require('../../models/GooglePhotoRef')
 const Category = require('../../models/Category');
 
 /** @desc Validation function */
@@ -474,8 +475,44 @@ router.get('/getcoordinates/:city/:address',(req,res)=>{
     .catch(err => console.log(err))
 });
 
-router.get('/getphoturi/:ref', (req, res) => {
-  const { ref } = req.params;
-  console.log(apiKeys.googleMapAPI)
+router.get('/querybusinesses/categories/:keyword/:address/:key/:city/', (req, res) => {
+  const { keyword, address, key, city } = req.params;
+  // const { location } = req.body;
+  // console.log(keyword.toLowerCase());
+  // console.log(address.toLowerCase());
+  // console.log(city.toLowerCase());
+  var kw = new RegExp("\\b"+keyword.toLowerCase()+"\\b","i");
+  const request = {};
+  request['categories.keyword'] = kw;
+  if (address !== 'all' || key !== 'none') {
+    var addressKey = `${key}`;
+    var lc = new RegExp("\\b"+address+"\\b",'i');
+    request['address'+'.'+addressKey] = lc;
+  };
+  Business.find(request)
+  // .populate({ path: })
+    .then(business => {
+      // console.log(business);
+      res.json(business)
+    })
+    .catch(err => res.status(400).json(err));
 })
+
+router.get('/queryphotoref/all/:business_id', (req,res) => {
+  const { business_id } = req.params;
+  Business.findOne({business: business_id})
+    .then(res => res.json(res.photos) )
+    .catch(err => res.status(400).json(err));
+})
+router.get('/queryphotoref/cover/:business_id', (req,res) => {
+  const { business_id } = req.params;
+
+  GooglePhotoRef.findOne({ business: business_id })
+    .then(photo => {
+      console.log(photo.photos[0])
+      return res.json(photo.photos[0])
+    })
+    .catch(err => res.status(400).json(err));
+})
+
 module.exports = router;
