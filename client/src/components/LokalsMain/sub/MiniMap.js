@@ -217,7 +217,7 @@ export default class MiniMap extends Component {
               {...mapviewport}
               mapStyle={LOKALS_STYLE}
               onViewportChange={(viewport) => this.handleViewportChange(viewport)}
-              mapboxApiAccessToken={ MAPBOX_TOKEN }
+              mapboxApiAccessToken={ process.env.REACT_APP_MAPBOX_TOKEN }
               minZoom={11}
               maxZoom={13.5}
               dragPan={true}

@@ -34,10 +34,9 @@ export default class LimitedMod extends Component {
   }
   render() {
     const { events, viewIndex } = this.state;
-    console.log(events);
     return (
       <div className="mdl-bound fture">
-        <h5 className="mdl-tt"><span>Today Features</span></h5>
+        <h5 className="mdl-tt"><span>Recently Post</span></h5>
         <div className="mdl">
           <div className="story-display">
             <div className="img-cont"

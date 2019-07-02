@@ -10,7 +10,7 @@ import { makeTitle } from '../../../util/stringFormat';
       <div className={`card-container sm`}> 
         <div className="top-info"
           style={ data.cover_photo.third_party && { 
-            backgroundImage: `url('https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${data.cover_photo.photo_reference}&key=${GOOGLE_MAP_API}')`,
+            backgroundImage: `url('https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${data.cover_photo.photo_reference}&key=${process.env.REACT_APP_GOOGLE_MAP_API}')`,
             backgroundSize: (data.cover_photo.width / data.cover_photo.height > 1.34) ? `auto 105%`:`105% auto`
           }}
         >
