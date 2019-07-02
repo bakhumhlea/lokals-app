@@ -15,6 +15,7 @@ const dbKey = require('./config/keys').mongoURI;
 
 const users = require('./routes/api/users');
 const profile = require('./routes/api/profile');
+const event = require('./routes/api/events');
 
 const business = require('./routes/api/businesses');
 
@@ -35,6 +36,7 @@ app.use('/api/users', users);
 app.use('/api/profile', profile);
 
 app.use('/api/business', business);
+app.use('/api/event', event);
 
 // Admin API
 app.use('/api/lokals', lokals);

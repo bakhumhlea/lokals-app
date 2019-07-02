@@ -17,7 +17,7 @@ import './LokalsMain.css'
 const DUMMY_USER = {
   pref: {
     areas: ['Financial District', 'Cow Hollow', 'Nob Hill', 'SOMA'],
-    kws: ['Thai', 'Japanese', 'Wine', 'Pasta', 'Coffee', 'Ramen'],
+    kws: ['Thai', 'Japanese', 'Wine', 'Italian', 'Coffee', 'Salad'],
     local: 'san francisco'
   }
 }
@@ -47,7 +47,6 @@ class LokalsMain extends Component {
       type: 'neighborhood'
     },
     userprefLc: null,
-    
   }
 
   componentDidMount() {
@@ -62,6 +61,7 @@ class LokalsMain extends Component {
       })
     }
   }
+  
   queryBusinesses(keyword, location, city) {
     Axios.get(`/api/business/querybusinesses/categories/${keyword}/${location.address}/${location.type}/${city}`)
       .then(res => {
@@ -122,7 +122,6 @@ class LokalsMain extends Component {
   render() {
     const { darkTheme, kw, lc, ct, opn, searchResults, currentKw, currentLc } = this.state;
     const { app } = this.props;
-    // console.log(app);
     var keywords = DUMMY_USER.pref.kws;
     var locations = DUMMY_USER.pref.areas;
     return (
@@ -176,7 +175,9 @@ class LokalsMain extends Component {
             </div>
             <div className="feed-content pd-common">
               <div className="top-feature flx jt-spbt">
-                <LimitedMod />
+                <LimitedMod 
+                  city={'san francisco'}
+                />
                 <MiniMap 
                   kw={currentKw}
                   lc={currentLc}

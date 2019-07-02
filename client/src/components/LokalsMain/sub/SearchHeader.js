@@ -10,7 +10,7 @@ class SearchHeader extends Component {
         <h2 className="lokals-slogan">Explore and Experience</h2>
         <div className="lk-wrap-inl lk-search-bar">
           <div className="lk-ip-group keyword ">
-            <input type="text" className="lk-ip search" placeholder={`Try "Larb", Aunt May Love This!`} name="kw"
+            <input type="text" className="lk-ip search" placeholder={`Try "Thai", Aunt May love Thai food!`} name="kw"
             onChange={(e)=>onChange(e)}
             value={kw}/>
             <svg className={kw.length===0?"clear-tx hid":"clear-tx"} width="13" height="13" fill="transparent" onClick={(e)=>onClearText(e,'kw')}>

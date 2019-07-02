@@ -481,23 +481,31 @@ router.get('/querybusinesses/categories/:keyword/:address/:key/:city/', (req, re
   // console.log(keyword.toLowerCase());
   // console.log(address.toLowerCase());
   // console.log(city.toLowerCase());
-  var kw = new RegExp("\\b"+keyword.toLowerCase()+"\\b","i");
-  const request = {};
-  request['categories.keyword'] = kw;
+  var kw = new RegExp("\\b"+keyword+"\\b","i");
+  const searchName = {};
+  const searchCategories = {}
+  searchName['business_name'] = kw;
+  searchCategories['categories.keyword'] = kw;
   if (address !== 'all' || key !== 'none') {
     var addressKey = `${key}`;
     var lc = new RegExp("\\b"+address+"\\b",'i');
-    request['address'+'.'+addressKey] = lc;
+    searchName['address'+'.'+addressKey] = lc;
+    searchCategories['address'+'.'+addressKey] = lc;
   };
-  Business.find(request)
-  // .populate({ path: })
+  Business.find(searchName)
     .then(business => {
-      // console.log(business);
-      res.json(business)
+      if (business.length===0) {
+        Business.find(searchCategories)
+          .then(biz => {
+            return res.json(biz);
+          })
+          .catch(err => res.status(400).json(err))
+      } else {
+        return res.json(business);
+      }
     })
     .catch(err => res.status(400).json(err));
 })
-
 router.get('/queryphotoref/all/:business_id', (req,res) => {
   const { business_id } = req.params;
   Business.findOne({business: business_id})

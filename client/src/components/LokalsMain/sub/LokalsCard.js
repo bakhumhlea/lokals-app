@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { GOOGLE_MAP_API } from '../../../config/keys';
-import { capitalize, makeTitle } from '../../../util/stringFormat';
+import { makeTitle } from '../../../util/stringFormat';
 
  class LokalsCard extends Component {
   render() {
@@ -28,28 +28,28 @@ import { capitalize, makeTitle } from '../../../util/stringFormat';
         </div>
         <div className="footer-info">
           <h6 className="desc head flx jt-spbt al-st">
-            <span className="name">{data.business_name}
+            <span className="name">{data && data.business_name}
             {/* <FontAwesomeIcon icon="wine-glass-alt" className="ic on-r"/> */}
             </span>
           </h6>
           <p className="desc first">
             <FontAwesomeIcon icon="map-marker-alt" className="ic on-l"/>
-            <span className="st">{data.address.street}</span>
+            <span className="st">{data && data.address.street}</span>
             <span>, </span>
             <span className="nbhood">{data.address.neighborhood}</span>
           </p>
           <p className="desc second flx jt-spbt">
             <span className="dist">
-              <FontAwesomeIcon icon={data.categories.slice(0,1)[0].keyword.match(/wine/i)?"wine-glass-alt":"utensils"} className="ic on-l"/>
-              {data.categories.slice(0,1).map((cat,i)=>(
+              <FontAwesomeIcon icon={data && data.categories.slice(0,1)[0].keyword.match(/wine/i)?"wine-glass-alt":"utensils"} className="ic on-l"/>
+              {data && data.categories.slice(0,1).map((cat,i)=>(
                 <span key={i}><span className="lk-link">{makeTitle(cat.keyword)}</span><span></span></span>
               ))}
               <span> • </span>
-              <span className="pri-cus">{(data.price && data.price.level > 0 ) ? '$'.repeat(data.price.level):'N/A'}</span>
+              { data && <span className="pri-cus">{(data.price && data.price.level > 0 ) ? '$'.repeat(data.price.level):'N/A'}</span>}
             </span>
             <span className="rating">
               <FontAwesomeIcon icon={['fab', 'google']} className="ic on-l gg"/>
-              <span>{data.google_rating}</span>
+              <span>{data && data.google_rating}</span>
             </span> 
           </p>
         </div>

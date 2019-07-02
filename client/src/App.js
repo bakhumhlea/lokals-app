@@ -5,7 +5,7 @@ import store from './store/store';
 import { fetchToken } from './util/fetchToken';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
-import { faSpinner, faStar, faUtensils, faMapMarker, faCheckCircle ,faAngleDown, faCloudRain, faBolt, faFireAlt, faGrinHearts, faGrinStars, faArrowLeft, faArrowRight, faThList, faCalendarAlt, faWineGlassAlt, faGlassMartini, faMapMarkerAlt, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
+import { faSpinner, faStar, faUtensils, faMapMarker, faCheckCircle ,faAngleDown, faCloudRain, faBolt, faFireAlt, faGrinHearts, faGrinStars, faArrowLeft, faArrowRight, faAngleRight, faThList, faCalendarAlt, faWineGlassAlt, faGlassMartini, faMapMarkerAlt, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 
 import Navbar from './components/NavBar/Navbar';
 import LokalsMain from './components/LokalsMain/LokalsMain';
@@ -16,7 +16,7 @@ import BOHBusinesses from './components/LokalsBOH/BOHBusinesses';
 
 import './App.css';
 
-library.add( fab, faSpinner, faStar, faUtensils, faMapMarker, faCheckCircle ,faAngleDown, faCloudRain, faBolt, faFireAlt, faGrinHearts, faGrinStars, faArrowLeft, faArrowRight, faThList, faCalendarAlt, faWineGlassAlt, faGlassMartini, faMapMarkerAlt, faThumbsUp );
+library.add( fab, faSpinner, faStar, faUtensils, faMapMarker, faCheckCircle ,faAngleDown, faCloudRain, faBolt, faFireAlt, faGrinHearts, faGrinStars, faArrowLeft, faArrowRight, faAngleRight, faThList, faCalendarAlt, faWineGlassAlt, faGlassMartini, faMapMarkerAlt, faThumbsUp );
 
 const App = () => {
   return (

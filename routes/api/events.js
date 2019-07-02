@@ -15,8 +15,25 @@ const isEmpty = require('../../validation/is-empty');
 const APP = require('../../util/app-default-value');
 const { strToOfObj } = require('../../util/helpers');
 
+
 /**
- * @route POST api/events/ofbusiness/id/:business_id
+ * @route GET api/event/all
+ * @desc Get all event
+ * @access Public
+ */
+router.get('/all/:city',(req,res) => {
+  const { city } = req.params;
+  const request = new RegExp("\\b"+city+"\\b","i");
+
+  Event.find({ 'location.city': request })
+    .populate('business','business_name address')
+    .then(events => {
+      return res.json(events)
+    })
+    .catch(err => res.status(400).json(err));
+})
+/**
+ * @route POST api/event/ofbusiness/id/:business_id
  * @desc Create Events for spacific business id
  * @access Private, only Admin of Business
  */
@@ -45,11 +62,11 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
 
   Profile.findOne({ user: req.user.id })
     .then(profile => {
-      const admin = profile.administration;
-      if (!(admin.is_admin && (admin.business_id.toString() === businessID))) {
-        errors.notadmin = "Your are not admin";
-        return res.status(400).json(errors);
-      }
+      // const admin = profile.administration;
+      // if (!(admin.is_admin && (admin.business_id.toString() === businessID))) {
+      //   errors.notadmin = "Your are not admin";
+      //   return res.status(400).json(errors);
+      // }
       const newEvent = new Event(eventFields);
       newEvent.business = businessID;
       newEvent.admin = profile.user;

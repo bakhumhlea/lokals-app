@@ -19,16 +19,21 @@ const EventSchema = new Schema({
   },
   description: {
     type: String,
-    required: true
   },
   event_date: {
     start: {
       type: Date,
-      required: true
     },
     end: {
       type: Date,
-      required: true
+    }
+  },
+  location: {
+    neighborhood: {
+      type: String
+    },
+    city: {
+      type: String
     }
   },
   ticket: {
@@ -79,8 +84,7 @@ const EventSchema = new Schema({
     }
   ],
   expires_at: {
-    type: Date,
-    required: true
+    type: Date
   },
   created_at: {
     type: Date,

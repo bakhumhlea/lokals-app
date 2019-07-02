@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const router = express.Router();
 const passport = require('passport');
 const apiKey = require('../../config/keys');
+const fetch = require('node-fetch');
 
 /** @desc Mongoose Model */
 const Profile = require('../../models/Profile');
@@ -202,7 +203,19 @@ router.post('/update/:business_id/photo-ref',(req,res) => {
   PhotoRef.findOne({ business: businessID})
     .then(photoref => {
       if (photoref) {
-        photoref.photos = photo_refs;
+        var newPhotoRef = photo_refs.map(async (ref) => {
+          const response = await fetch(`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${ref.photo_reference}&key=${apiKey.googleMapAPI}`)
+          const uri = await response.json();
+          if (response.status !== 200) {
+            console.log(response);
+          } else {
+            return {
+              ...ref,
+              photo_reference: uri
+            }
+          }
+        });
+        photoref.photos = newPhotoRef;
         photoref.save()
           .then(p => res.json(p))
           .catch(e => res.json(e))
