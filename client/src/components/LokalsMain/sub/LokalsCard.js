@@ -5,11 +5,11 @@ import { capitalize, makeTitle } from '../../../util/stringFormat';
 
  class LokalsCard extends Component {
   render() {
-    const { data, following, onDark, index, imgOn } = this.props;
+    const { data, following, onDark, index } = this.props;
     return (
       <div className={`card-container sm`}> 
         <div className="top-info"
-          style={ imgOn && data.cover_photo.third_party && { 
+          style={ data.cover_photo.third_party && { 
             backgroundImage: `url('https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${data.cover_photo.photo_reference}&key=${GOOGLE_MAP_API}')`,
             backgroundSize: (data.cover_photo.width / data.cover_photo.height > 1.34) ? `auto 105%`:`105% auto`
           }}

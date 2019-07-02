@@ -6,7 +6,7 @@ export default function LimitedMod(props) {
     <div className="mdl-bound fture">
       <h5 className="mdl-tt"><span>Limited Time</span></h5>
       <div className="mdl">
-        <div class="story-display">
+        <div className="story-display">
           <div className="img-cont">
             <div className="top-els">
               <span className="main-tag">

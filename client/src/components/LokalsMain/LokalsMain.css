@@ -53,6 +53,7 @@
 }
 .lokals-qk-search {
   display: flex;
+  justify-content: space-between;
   align-items: flex-start;
   width: 90%;
   margin: 0 auto;
@@ -62,7 +63,8 @@
   padding: 0 40px;
 }
 .lokals-qk-search .lk-ip-group.opn {
-  width: 20%;
+  min-width: 100px;
+  width: 10%;
 }
 .lokals-feed {
   width: 100%;

@@ -51,7 +51,6 @@ export default class MiniMap extends Component {
         this.getNearUser(kw, {address:'your location',type:'none'}, location, ty, 1000 , false);
       });
     } else {
-      console.log(lc)
       const clc = isEmpty(lc)?{address:'financial district',type:'neighborhood'}:lc;
       this.getNearbyPlaces(kw, clc, ty, ct, 1000 , false);
     }
@@ -85,7 +84,6 @@ export default class MiniMap extends Component {
   }
   getNearUser(keyword,address,location,type,radius,opennow, e) {
     if (e) e.preventDefault();
-    console.log(type);
     const params = {};
     params.kw = keyword;
     params.lc = address;
@@ -94,7 +92,6 @@ export default class MiniMap extends Component {
     params.opn = opennow;
     Axios.get(`/api/business/searchnearuser/${params.kw}/${params.ty}/${location.lat}/${location.lng}/${params.rad}/${params.opn}`)
       .then(res => {
-        console.log(res.data);
         return this.setState({
           lc: address,
           markers: res.data,
@@ -197,7 +194,7 @@ export default class MiniMap extends Component {
               Redo Search
             </div>
           )}
-          <div className="lk-btn sm center-map"
+          {cMapCen && (<div className="lk-btn sm center-map"
             onClick={(e)=>this.locateUserLocation(e)}>
               <svg width="20" height="20" fill="transparent">
                 <circle cx="10" cy="10" r="3" fill="#494949"/>
@@ -207,8 +204,7 @@ export default class MiniMap extends Component {
                 <path d="M10 0 L10 3" />
                 <path d="M10 17 L10 20" />
               </svg>
-            {/* <FontAwesomeIcon icon="center" className="ic center"/> */}
-          </div>
+          </div>)}
           { !(mapviewport.latitude && mapviewport.longitude) ? 
             (<Spinner cssStyle={{
               top: `50%`,
