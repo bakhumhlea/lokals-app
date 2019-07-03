@@ -19,7 +19,7 @@ export default class MiniMap extends Component {
   state = {
     kw: 'thai',
     ty: 'restaurant',
-    lc: 'downtown',
+    lc: {address: 'downtown',type:'neighborhood'},
     ct: 'San Francisco',
     opennow: false,
     markers: null,
@@ -41,6 +41,7 @@ export default class MiniMap extends Component {
   }
   componentDidMount() {
     const { kw, ct, lc } = this.props;
+    console.log(lc);
     const { ty } = this.state;
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
@@ -48,6 +49,25 @@ export default class MiniMap extends Component {
           lat: position.coords.latitude,
           lng: position.coords.longitude
         };
+        this.setState({
+          mapviewport : {
+            ...this.state.mapviewport,
+            latitude: location.lat,
+            longitude: location.lng
+          },
+          cUserLc: {
+            lat: location.lat, 
+            lng: location.lng
+          },
+          cMapCen: {
+            lat: location.lat, 
+            lng: location.lng
+          },
+          cSearchCen: {
+            lat: location.lat, 
+            lng: location.lng
+          },
+        })
         this.getNearUser(kw, {address:'your location',type:'none'}, location, ty, 1000 , false);
       });
     } else {
@@ -86,7 +106,6 @@ export default class MiniMap extends Component {
     if (e) e.preventDefault();
     const params = {};
     params.kw = keyword;
-    params.lc = address;
     params.ty = type;
     params.rad = radius || 1000;
     params.opn = opennow;
@@ -95,18 +114,6 @@ export default class MiniMap extends Component {
         return this.setState({
           lc: address,
           markers: res.data,
-          cUserLc: {
-            lat: location.lat, 
-            lng: location.lng
-          },
-          cMapCen: {
-            lat: location.lat, 
-            lng: location.lng
-          },
-          cSearchCen: {
-            lat: location.lat, 
-            lng: location.lng
-          },
           mapviewport: {
             ...this.state.mapviewport,
             latitude: location.lat,
@@ -125,7 +132,7 @@ export default class MiniMap extends Component {
     params.rad = radius || 1000;
     params.opn = opennow;
     params.ct = city;
-    Axios.get(`/api/business/searchnearby/${params.kw}/${params.ty}/${params.lc}/${params.ct}/${params.rad}/${params.opn}`)
+    Axios.get(`/api/business/searchnearby/${params.kw}/${params.ty}/${params.lc.address}/${params.ct}/${params.rad}/${params.opn}`)
       .then(res => {
         if (res.data.length>0) {
           return this.setState({
@@ -217,7 +224,7 @@ export default class MiniMap extends Component {
               {...mapviewport}
               mapStyle={LOKALS_STYLE}
               onViewportChange={(viewport) => this.handleViewportChange(viewport)}
-              mapboxApiAccessToken={ 'pk.eyJ1IjoiYmFraHVtaGxlYSIsImEiOiJjamZyZTJhMjQyaTAzMnFzMno5NDB4eG5mIn0.XKv0UoePGy4WNqymE-GLLw' }
+              mapboxApiAccessToken="pk.eyJ1IjoiYmFraHVtaGxlYSIsImEiOiJjamZyZTJhMjQyaTAzMnFzMno5NDB4eG5mIn0.XKv0UoePGy4WNqymE-GLLw"
               minZoom={11}
               maxZoom={13.5}
               dragPan={true}
@@ -225,40 +232,40 @@ export default class MiniMap extends Component {
               transitionDuration={50}
               transitionInterpolator={new LinearInterpolator()}
             >
-            { cMapCen && cMapCen.lat !== cSearchCen.lat && (<Marker 
-              className="current-pos-marker"
-              latitude={mapviewport.latitude}
-              longitude={mapviewport.longitude}>
-              {/* <FontAwesomeIcon icon="circle"/> */}
-              <svg width="20" height="20" fill="#c4762d" stroke="#ffffff" strokeWidth="2">
-                <circle cx="10" cy="10" r="7"/>
-              </svg>
-            </Marker>) }
-            {markers && markers.length > 0 && markers.map((marker,i)=>(
-              <CustomPopup 
-                key={i}
-                popupId={i}
-                longitude={marker.geometry.location.lng} 
-                latitude={marker.geometry.location.lat} 
-                data={marker} 
-                selectedPopup={selectedMarker === i} 
-                offset={{x:-3,y:-40}}
-              />
-            ))}
-            { markers && markers.length > 0 && markers.map((marker,i)=>(
-              <CustomMarker
-                key={i}
-                markerID={i}
-                selectedMarker={selectedMarker === i}
-                showMarkerNumber={true}
-                data={marker}
-                offset={{x:-15,y:-30}}
-                latitude={marker.geometry.location.lat}
-                longitude={marker.geometry.location.lng}
-                onHoverMarker={(index,e) => this.onHoverMarker(index,e)}
-                onClickMarker={() => console.log("Click")}
-              />
-            ))}
+              { cMapCen && cMapCen.lat !== cSearchCen.lat && (<Marker 
+                className="current-pos-marker"
+                latitude={mapviewport.latitude}
+                longitude={mapviewport.longitude}>
+                {/* <FontAwesomeIcon icon="circle"/> */}
+                <svg width="20" height="20" fill="#c4762d" stroke="#ffffff" strokeWidth="2">
+                  <circle cx="10" cy="10" r="7"/>
+                </svg>
+              </Marker>) }
+              {markers && markers.length > 0 && markers.map((marker,i)=>(
+                <CustomPopup 
+                  key={i}
+                  popupId={i}
+                  longitude={marker.geometry.location.lng} 
+                  latitude={marker.geometry.location.lat} 
+                  data={marker} 
+                  selectedPopup={selectedMarker === i} 
+                  offset={{x:-3,y:-40}}
+                />
+              ))}
+              { markers && markers.length > 0 && markers.map((marker,i)=>(
+                <CustomMarker
+                  key={i}
+                  markerID={i}
+                  selectedMarker={selectedMarker === i}
+                  showMarkerNumber={true}
+                  data={marker}
+                  offset={{x:-15,y:-30}}
+                  latitude={marker.geometry.location.lat}
+                  longitude={marker.geometry.location.lng}
+                  onHoverMarker={(index,e) => this.onHoverMarker(index,e)}
+                  onClickMarker={() => console.log("Click")}
+                />
+              ))}
             </ReactMapGL>)
           }
         </div>

@@ -9,9 +9,10 @@ import { makeTitle } from '../../../util/stringFormat';
     return (
       <div className={`card-container sm`}> 
         <div className="top-info"
+          id={data.cover_photo.third_party && (data.cover_photo.width / data.cover_photo.height)}
           style={ data.cover_photo.third_party && { 
             backgroundImage: `url('https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${data.cover_photo.photo_reference}&key=${'AIzaSyABR-OotFMskoGoPXOQ4LYUhb6ChUvnnPM'}')`,
-            backgroundSize: (data.cover_photo.width / data.cover_photo.height > 1.34) ? `auto 105%`:`105% auto`
+            backgroundSize: (data.cover_photo.width / data.cover_photo.height > 1.55) ? `auto 105%`:`105% auto`
           }}
         >
           <div className="biz-type">
