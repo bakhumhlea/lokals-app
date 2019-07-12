@@ -41,7 +41,6 @@ export default class MiniMap extends Component {
   }
   componentDidMount() {
     const { kw, ct, lc } = this.props;
-    console.log(lc);
     const { ty } = this.state;
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
@@ -224,7 +223,7 @@ export default class MiniMap extends Component {
               {...mapviewport}
               mapStyle={LOKALS_STYLE}
               onViewportChange={(viewport) => this.handleViewportChange(viewport)}
-              mapboxApiAccessToken="pk.eyJ1IjoiYmFraHVtaGxlYSIsImEiOiJjamZyZTJhMjQyaTAzMnFzMno5NDB4eG5mIn0.XKv0UoePGy4WNqymE-GLLw"
+              mapboxApiAccessToken={MAPBOX_TOKEN}
               minZoom={11}
               maxZoom={13.5}
               dragPan={true}

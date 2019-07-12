@@ -13,7 +13,6 @@ import MiniMap from './sub/MiniMap';
 
 import './LokalsMain.css'
 
-
 const DUMMY_USER = {
   pref: {
     areas: ['Financial District', 'Cow Hollow', 'Nob Hill', 'SOMA'],
@@ -144,7 +143,7 @@ class LokalsMain extends Component {
                 <div className="comm-feature">
                   <div className="mdl-bound sugg-list">
                     <h5 className="mdl-tt flx al-c">
-                      <span className="mr-3">{`Results for ${currentKw}`}</span>
+                      <span className="mr-3">{`${searchResults.length} Results for ${currentKw}`}</span>
                       <span className="lk-btn btn-war sm tx-cap mr-2">{currentLc.address}</span>
                       <span className="lk-btn-ol sm tx-cap mr-2">{currentKw}</span>
                     </h5>

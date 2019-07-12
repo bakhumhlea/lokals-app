@@ -11,7 +11,7 @@ import { makeTitle } from '../../../util/stringFormat';
         <div className="top-info"
           id={data.cover_photo.third_party && (data.cover_photo.width / data.cover_photo.height)}
           style={ data.cover_photo.third_party && { 
-            backgroundImage: `url('https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${data.cover_photo.photo_reference}&key=${'AIzaSyABR-OotFMskoGoPXOQ4LYUhb6ChUvnnPM'}')`,
+            backgroundImage: `url('https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${data.cover_photo.photo_reference}&key=${GOOGLE_MAP_API}')`,
             backgroundSize: (data.cover_photo.width / data.cover_photo.height > 1.55) ? `auto 105%`:`105% auto`
           }}
         >

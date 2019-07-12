@@ -12,7 +12,7 @@ const BusinessSchema = new Schema({
   },
   business_type: {
     type: String,
-    required: true
+    required: true,
   },
   contacts: {
     number: {
@@ -134,7 +134,7 @@ const BusinessSchema = new Schema({
   categories: [
     {
       keyword: {
-        type: String
+        type: String,
       }
     }
   ],
@@ -242,5 +242,11 @@ const BusinessSchema = new Schema({
     default: Date.now
   }
 });
+
+BusinessSchema.index({
+  'categories.keyword': 'text',
+  'business_name': 'text',
+  'business_type': 'text',
+})
 
 module.exports = Business = mongoose.model('businesses', BusinessSchema);

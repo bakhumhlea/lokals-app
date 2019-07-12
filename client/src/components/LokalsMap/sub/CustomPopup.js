@@ -1,7 +1,7 @@
 import React from 'react'
 import { BaseControl } from 'react-map-gl'
 import './LokalsMapbox.css'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class CustomPopup extends BaseControl {
   calculateStar(rating, star) {

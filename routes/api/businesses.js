@@ -476,6 +476,7 @@ router.get('/getcoordinates/:city/:address',(req,res)=>{
 });
 
 router.get('/querybusinesses/categories/:keyword/:address/:key/:city/', (req, res) => {
+  
   const { keyword, address, key, city } = req.params;
   // const { location } = req.body;
   // console.log(keyword.toLowerCase());
@@ -487,24 +488,46 @@ router.get('/querybusinesses/categories/:keyword/:address/:key/:city/', (req, re
   searchName['business_name'] = kw;
   searchCategories['categories.keyword'] = kw;
   if (address !== 'all' || key !== 'none') {
-    var addressKey = `${key}`;
-    var lc = new RegExp("\\b"+address+"\\b",'i');
-    searchName['address'+'.'+addressKey] = lc;
-    searchCategories['address'+'.'+addressKey] = lc;
-  };
-  Business.find(searchName)
-    .then(business => {
-      if (business.length===0) {
-        Business.find(searchCategories)
-          .then(biz => {
-            return res.json(biz);
-          })
-          .catch(err => res.status(400).json(err))
-      } else {
+    console.log('search' + key);
+    let lc = new RegExp("\\b"+address+"\\b",'i');
+    Business.find()
+      .or([{'business_name':kw}, {'categories.keyword': kw}])
+      .and([{'address.neighborhood':lc}])
+      .then(business => {
+        console.log(business);
         return res.json(business);
-      }
-    })
-    .catch(err => res.status(400).json(err));
+      })
+      .catch(err => res.status(400).json(err));
+  } else {
+    console.log('search all location');
+    Business.find()
+      .or([{'business_name':kw}, {'categories.keyword': kw}])
+      .then(business => {
+        // console.log(business);
+        return res.json(business);
+      })
+      .catch(err => res.status(400).json(err));
+  };
+  // Business.find()
+  //   .or([{'business_name':kw}, {'categories.keyword': kw}])
+  //   .and([{'address.neighborhood':lc}])
+  //   .then(business => {
+  //     console.log(business);
+  //     // if (business.length===0) {
+  //     //   Business.find(searchCategories)
+  //     //     .then(biz => {
+  //     //       console.log(biz);
+  //     //       return res.json(biz);
+  //     //     })
+  //     //     .catch(err => res.status(400).json(err))
+  //     // } else {
+  //     //   console.log('name results');
+  //     //   console.log(business)
+        
+  //     // }
+  //     return res.json(business);
+  //   })
+  //   .catch(err => res.status(400).json(err));
 })
 router.get('/queryphotoref/all/:business_id', (req,res) => {
   const { business_id } = req.params;
