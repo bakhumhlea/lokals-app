@@ -1,17 +1,29 @@
 import TYPES from "./types";
 import Axios from "axios";
+import { saveRecentSearchKeyword } from "./profileActions";
 // import isEmpty from '../util/is-empty';
 
-export const setSearchResults = (keywords, zoomindex) => dispatch => {
-  Axios
-    .get(`/api/business/search/category/${keywords}`)
+export const getSearchResults = (keyword, location, city) => dispatch => {
+  Axios.get(`/api/business/querybusinesses/categories/${keyword}/${location.address}/${location.type}/${city}`)
     .then(res => {
-      dispatch(setMapCenter(res.data[0].location));
-      dispatch(setZoom(zoomindex));
-      dispatch(setResults(res.data));
+      dispatch(setResults(res.data.businesses));
+      dispatch(setSearchQuery({
+        currentKw: keyword,
+        currentLc: location,
+        currentCenter: res.data.map_center
+      }));
+      dispatch(saveRecentSearchKeyword(keyword));
     })
-    .catch(err => console.log(err));
+  .catch(err => { if (err) console.log({error: err.response})});
 };
+
+export const getSearchResultsOnly = (keyword, location, city) => dispatch => {
+  Axios.get(`/api/business/querybusinesses/categories/${keyword}/${location.address}/${location.type}/${city}`)
+    .then(res => {
+      dispatch(setResults(res.data.businesses));
+    })
+  .catch(err => { if (err) console.log({error: err.response})});
+}
 
 export const setResults = (results) => {
   return {
@@ -19,7 +31,12 @@ export const setResults = (results) => {
     payload: results
   };
 }
-
+export const setSearchQuery = (query) => {
+  return {
+    type: TYPES.SET_QUERY,
+    payload: query
+  }
+}
 export const setMapCenter = (position) => {
   return {
     type: TYPES.SET_CENTER,

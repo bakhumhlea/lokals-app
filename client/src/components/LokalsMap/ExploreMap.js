@@ -1,70 +1,48 @@
 import React, { Component } from 'react'
-import Axios from 'axios';
+// import Axios from 'axios';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import Spinner from '../Common/Spinner';
 import { setCurrentPath } from '../../actions/appstateAction';
 import LokalsLogo from '../Common/LokalsLogo';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ReactMapGL, { Marker, LinearInterpolator } from 'react-map-gl'
 import { MAPBOX_TOKEN } from '../../config/keys';
 import CustomMarker from '../LokalsMap/sub/CustomMarker';
 import ResultsTab from './ResultsTab';
-import { capitalize } from '../../util/stringFormat';
+// import { capitalize } from '../../util/stringFormat';
 
 import './ExploreMap.css'
+import TabButtons from './sub/TabButtons';
+import ExplorerTab from './sub/ExplorerTab';
+import { getSearchResults } from '../../actions/searchActions';
+import CustomPopup from './sub/CustomPopup';
 
 
-const CITIES = [
-  {name: 'San Francisco', location: {
-    lat: 37.7749, lng: -122.4194
-  }},
-  {name: 'New York', location: {
-    lat: 40.7128, lng: -74.0060
-  }},
-  {name: 'London', location: {
-    lat: 51.5074, lng: -0.1278
-  }},
-  {name: 'Paris', location: {
-    lat: 48.8566, lng: 2.3522
-  }},
-  {name: 'Los Angeles', location: {
-    lat: 34.0522, lng: -118.2437
-  }},
-  {name: 'Barcelona', location: {
-    lat: 41.3851, lng: 2.1734
-  }},
-  {name: 'Tokyo', location: {
-    lat: 35.6821, lng: 139.7647
-  }},
-  {name: 'Osaka', location: {
-    lat: 34.6936, lng: 135.5009
-  }},
-  {name: 'Chiang Mai', location: {
-    lat: 18.7886, lng: 98.9861
-  }}
-];
+
 const LOKALS_STYLE = 'mapbox://styles/bakhumhlea/cjsp4km8x072o1fmevtwowt5x';
 
 class ExploreMap extends Component {
   state = {
-    keyword: 'all',
+    kw: 'wine',
+    lc: {
+      address: 'all', 
+      type: 'none'
+    },
     type: 'restaurant',
-    city: 'San Francisco',
-    opennow: false,
     activeTab: 'exp_reslt',
     markers: null,
     showPopup: true,
-    selectedMarker: null,
-    currentKeyword: 'all',
-    currentMapCenter: null,
+    selectedMarker: 0,
+    currentKw: 'all',
+    currentCenter: null,
     currentSearchCenter: null,
-    searchRadius: 1000,
+    radius: 1000,
     mapviewport: {
       width: '100%',
       height: '100%',
-      zoom: 13.5,
+      zoom: 12.0,
       latitude: null,
       longitude: null,
       bearing: 0,
@@ -72,76 +50,64 @@ class ExploreMap extends Component {
     }
   }
   componentDidMount() {
-    // const backToTopBtn = document.getElementById("back_to_top");
-    // window.onscroll = function() {
-    //   // console.log(window.pageYOffset);
-    //   if (window.pageYOffset > 300) {
-    //     backToTopBtn.style.opacity = 1;
-    //     backToTopBtn.style.transform = 'translate(-50%, 0%)';
-    //   } else {
-    //     backToTopBtn.style.opacity = 0;
-    //     backToTopBtn.style.transform = 'translate(-50%, -120%)';
-    //   }
-    // }; 
     this.props.setCurrentPath('/explore');
-
-    var currentLocation = null;
+    const { kw, lc } = this.state;
+    const { city } = this.props.app.local;
+    const { businessResults, query } = this.props.search;
+    // var currentLocation = null;
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          currentLocation = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          };
-          this.getNearbyPlaces(this.state.keyword, this.state.type, currentLocation , 1000 , null);
+          // currentLocation = {
+          //   lat: position.coords.latitude,
+          //   lng: position.coords.longitude
+          // };
+          // console.log('Search');
+          if (query.currentKw !== "") {
+            this.onSearch(query.currentKw,lc,city)
+          } else {
+            this.onSearch(kw,lc,city)            
+          }
         }
       );
     } else {
-      this.getNearbyPlaces(this.state.keyword, this.state.type, null , 1000 , null);
+      this.onSearch(kw,lc,city)
+    }
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.search !== this.props.search) {
+      if (this.props.search.businessResults.length > 0) {
+        this.setState({
+          mapviewport: {
+            ...this.state.mapviewport,
+            latitude: this.props.search.query.currentCenter.lat,
+            longitude: this.props.search.query.currentCenter.lng
+          },
+          kw: this.props.search.query.currentKw,
+          currentKw: this.props.search.query.currentKw,
+          activeTab: 'exp_reslt',
+        })
+      }
     }
   }
   componentWillUnmount() {
     this.props.setCurrentPath({});
   }
-  onChange(e) {
-    e.preventDefault();
-    this.setState({[e.target.name]: e.target.value})
-  }
-  onChangeCity(e) {
-    e.preventDefault();
-    console.log(e.target.value);
-    const cities = CITIES.map(city=>city.name);
-    console.log(cities);
-    const idx = cities.indexOf(e.target.value);
-    console.log(idx);
-    this.setState({
-      currentMapCenter: {
-        lat: CITIES[idx].location.lat,
-        lng: CITIES[idx].location.lng
-      },
-      mapviewport: {
-        ...this.state.mapviewport,
-        latitude: CITIES[idx].location.lat,
-        longitude: CITIES[idx].location.lng,
-      },
-      city: CITIES[idx].name})
-  }
-  onClickOpenTab(tab, e) {
+  onOpenTab(tab, e) {
     if (e) e.preventDefault();
     const { activeTab } = this.state;
     if (activeTab !== tab) {
       this.setState({activeTab: tab});
-    } else {
-      return;
     }
   }
   handleViewportChange(viewport) {
-    // console.log(viewport.latitude+","+viewport.longitude);
-    this.getCurrentMapCenter({
-      lat: viewport.latitude, 
-      lng: viewport.longitude
-    }, viewport.zoom)
-    this.setState({...this.state, mapviewport:viewport})
+    if (viewport) {
+      this.getCurrentCenter({
+        lat: viewport.latitude, 
+        lng: viewport.longitude
+      }, viewport.zoom)
+    }
+    this.setState({mapviewport:viewport})
   }
   getCurrentPosition() {
     if ('geolocation' in navigator) {
@@ -150,75 +116,31 @@ class ExploreMap extends Component {
       );
     }
   }
-  getCurrentMapCenter(center, zoom) {
-    var searchRadius = Math.ceil(1000 + (((13 - zoom)) * 300));
+  getCurrentCenter(center, zoom) {
+    // console.log(center);
+    var radius = Math.ceil(1000 + (((13 - zoom)) * 300));
     this.setState({
-      currentMapCenter: center,
-      searchRadius: searchRadius
+      radius: radius
     });
   }
-  getNearbyPlaces(keyword, type, location, radius, e) {
+  onSearch(kw, lc, ct, e) {
     if (e) e.preventDefault();
-    const kw = keyword && keyword.length !== 0 ?  keyword : 'all';
-    const ty = type && type.length !== 0  ? type : 'restaurant';
-    const loc = location || this.state.city;
-    const rad = radius || this.state.searchRadius;
-    const { opennow } = this.state;
-    // console.log(kw + ty + loc + rad)
-    Axios.get(`/api/business/searchnearby/${kw}/${ty}/${loc.lat}/${loc.lng}/${rad}/${opennow}`)
-      .then(res => {
-        if (res.data.length !== 0) {
-          return this.setState({
-            currentKeyword: kw,
-            mapviewport: {
-              ...this.state.mapviewport,
-              latitude: res.data[0].geometry.location.lat,
-              longitude: res.data[0].geometry.location.lng,
-            },
-            currentMapCenter: {
-              lat: res.data[0].geometry.location.lat,
-              lng: res.data[0].geometry.location.lng
-            },
-            currentSearchCenter: {
-              lat: res.data[0].geometry.location.lat,
-              lng: res.data[0].geometry.location.lng
-            },
-            markers: res.data,
-            selectedMarker: 0,
-            activeTab: 'exp_reslt'
-          });
-        } else {
-          return this.setState({
-            mapviewport: {
-              ...this.state.mapviewport,
-              latitude: loc.lat,
-              longitude: loc.lng,
-            },
-            currentMapCenter: {
-              lat: loc.lat,
-              lng: loc.lng
-            },
-            currentSearchCenter: {
-              lat: loc.lat,
-              lng: loc.lng
-            },
-            markers: [],
-            selectedMarker: null,
-            activeTab: 'exp_reslt',
-          });
-        }
-      })
-      .catch(err => console.log(err.response.data));
+    // console.log(kw);
+    this.props.getSearchResults(kw, lc, ct);
+  }
+  onSelectMarker(index,e) {
+    if(e) e.preventDefault();
+    this.setState({
+      selectedMarker: index
+    });
   }
   render() {
-    const recents = ['coffee','sushi','bar','indian'];
-    const preferences = ['japanese','thai','late_night_coffee','italian','vietnamese'];
-    const { mapviewport ,keyword, type, opennow, activeTab, 
-      markers, currentKeyword, currentMapCenter, currentSearchCenter, searchRadius } = this.state;
-    // const { electedMarker, showPopup } = this.state;
-      // console.log(currentMapCenter  && `${currentMapCenter.lat},${currentMapCenter.lng}` === "51.5074,-0.1278");
-    const { history } = this.props;
-    const { theme } = this.props.app;
+    // const recents = ['coffee','sushi','bar','indian'];
+    // const pref = ['japanese','thai','late_night_coffee','italian','vietnamese'];
+    const { mapviewport ,kw, type, activeTab, 
+       currentKw, currentLc, currentCenter, selectedMarker, radius } = this.state;
+    const { history ,search, user } = this.props;
+    const { theme, local } = this.props.app;
     return (
       <div className={theme?"page-container explore-map dark-th":"page-container explore-map"}>
         <div className="explorer">
@@ -232,40 +154,15 @@ class ExploreMap extends Component {
                 <path d="M25 15 L15 25"/>
               </svg>
             </button>
-            <div className="btn-rack flx">
-              <button
-                type="button" 
-                className={activeTab==='exp_tool'?"lk-btn active":"lk-btn"} 
-                name="exp_tool" 
-                onClick={(e)=>this.onClickOpenTab('exp_tool', e)}
-              >
-                <FontAwesomeIcon icon="search"/>
-              </button>
-              <button
-                type="button" 
-                className={activeTab==='exp_reslt'?"lk-btn active":"lk-btn"} 
-                name="exp_reslt" 
-                onClick={(e)=>this.onClickOpenTab('exp_reslt', e)}
-              >
-                <FontAwesomeIcon icon="th-large"/>
-              </button>
-              <button
-                type="button"
-                className={activeTab==='exp_fav'?"lk-btn active":"lk-btn"} 
-                name="exp_fav" 
-                onClick={(e)=>this.onClickOpenTab('exp_fav', e)}
-              >
-                <FontAwesomeIcon icon="heart"/>
-              </button>
-              {/* <button
-                type="button"
-                className={activeTab==='exp_filt'?"lk-btn active":"lk-btn"} 
-                name="exp_filt" 
-                onClick={(e)=>this.onClickOpenTab('exp_filt', e)}
-              >
-                <FontAwesomeIcon icon="filter"/>
-              </button> */}
-            </div>
+            <TabButtons
+              activeTab={activeTab}
+              tabs={[
+                {name: 'exp_tool', icon: 'search'},
+                {name: 'exp_reslt', icon: 'th-large'},
+                // {name: 'exp_fav', icon: 'heart'}
+              ]}
+              onClickTab={(tabname, e)=>this.onOpenTab(tabname, e)}
+            />
           </div>
           <div className="explorer-cons sha-1">
             <div className="logo-bar">
@@ -274,100 +171,25 @@ class ExploreMap extends Component {
                 <h5 className="tool-name">EXPLORER</h5>
               </div>
             </div>
-            { activeTab==='exp_tool' && <div className="explorer-tab">
-              <div className="explorer-ip">
-                <div className="qk-search">
-                  <h4 className="sec-hd ft-2">
-                    Quick Search
-                    <FontAwesomeIcon icon="bolt" className="ml-2"/>
-                  </h4>
-                  <h5 className="label-1 mb-2">Recent</h5>
-                  <div className="flx mb-2 wrp">
-                    {recents && recents.map((recent,i)=>(
-                      <span key={i} className={currentKeyword===recent?"lk-btn-ol toggle sm selected":"lk-btn-ol toggle sm"}
-                        onClick={(e)=>this.getNearbyPlaces(recent, type, currentMapCenter, searchRadius, e)}
-                      >
-                        {recent.split('_').map(r => capitalize(r)).join(' ')}
-                      </span>
-                    ))}
-                  </div>
-                  <h5 className="label-1 mb-2">Preferences</h5>
-                  <div className="flx wrp">
-                    {preferences && preferences.map((pref,i)=>(
-                      <span key={i} className={currentKeyword===pref?"lk-btn-ol toggle sm selected":"lk-btn-ol toggle sm" }
-                        onClick={(e)=>this.getNearbyPlaces(pref, type, currentMapCenter, searchRadius, e)}
-                      >
-                        {pref.split('_').map(kw => capitalize(kw)).join(' ')}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <div className="normal-search">
-                  <h4 className="sec-hd ft-2">
-                    Looking for
-                    <FontAwesomeIcon icon="search" className="ml-2"/>
-                  </h4>
-                  <div className="lk-ip-group">
-                    <input 
-                      type="text" 
-                      className="lk-ip" 
-                      name="keyword" 
-                      value={keyword}
-                      onChange={(e)=>this.onChange(e)} 
-                      placeholder="Find restaurant, cuisine, etc.."/>
-                  </div>
-                  <div className="lk-wrap-inl ip-x2">
-                    <div className="lk-ip-group">
-                      <h5 className="label-1 mb-2">In</h5>
-                      <div className="lk-ip">
-                        <select name="type" onChange={(e)=>this.onChange(e)} value={type}>
-                          <option value="restaurant">Restaurant</option>
-                          <option value="place">Place</option>
-                          <option value="event">Event</option>
-                        </select>
-                        <FontAwesomeIcon icon="angle-down" className="dropdown-icon"/>
-                      </div>
-                    </div>
-                    <div className="lk-ip-group">
-                      <h5 className="label-1 mb-2">Where</h5>
-                      <div className="lk-ip-ol">
-                        <select name="city" 
-                          onChange={(e)=>this.onChangeCity(e)}
-                          defaultValue={this.state.city}
-                          >
-                          { CITIES && CITIES.map((ct,i)=>(
-                            <option value={ct.name} key={i}>{ct.name}</option>
-                          ))}
-                        </select>
-                        <FontAwesomeIcon icon="angle-down" className="dropdown-icon"/>
-                      </div>
-                    </div>
-                  </div>
-                  <h5 className="label-1 mb-2">Which</h5>
-                  <div className="flx wrp">
-                    <span className={opennow?"lk-tag-btn sm selected":"lk-tag-btn sm" }
-                      onClick={()=>this.setState({opennow: !opennow})}
-                    >
-                      {opennow?(<span>Open Now<FontAwesomeIcon icon="check" className="ml-1"/></span>):"Open now"}
-                    </span>
-                    <span className="lk-tag-btn sm">WiFi</span>
-                    <span className="lk-tag-btn sm">Good Wine List</span>
-                    <span className="lk-tag-btn sm">Good for a Date</span>
-                    <span className="lk-tag-btn sm">Cozy and Chill</span>
-                  </div>
-                </div>
-              </div>
-              <button 
-                className="lk-btn btn-pri full-wd search-btn" 
-                onClick={(e)=>this.getNearbyPlaces(keyword, type, currentMapCenter, searchRadius, e)}
-              >
-                  <FontAwesomeIcon icon="search" className="mr-1"/> Search
-              </button>
-            </div>}
+            { activeTab ==='exp_tool' && (
+              <ExplorerTab
+                recents={user.recentKw}
+                pref={user.pref}
+                currentKw={currentKw}
+                currentLc={currentLc}
+                currentCenter={currentCenter}
+                ct={local.city}
+                type={type}
+                radius={radius}
+                onChange={(e)=>this.onChange(e)}
+                onClickSearch={(kw,lc,ct,e)=>this.onSearch(kw,lc,ct,e)}
+              />
+            )}
             { activeTab==='exp_reslt' && 
               <ResultsTab 
-                markers={markers}
-                keyword={keyword}
+                markers={search.businessResults}
+                kw={kw}
+                onHoverResultCard={(index,e) => this.onSelectMarker(index,e)}
               />}
             { activeTab==='exp_fav' &&
               <div className="explorer-tab">
@@ -378,15 +200,15 @@ class ExploreMap extends Component {
                 <div className="explorer-results">Filters</div>
               </div>}
           </div>          
-          <div className="explorer-redo">
+          {/* <div className="explorer-redo">
             <button 
               className="lk-btn btn-dan full-wd"
-              onClick={(e)=>this.getNearbyPlaces(keyword, type, currentMapCenter, searchRadius, e)}
+              onClick={(e)=>this.getNearbyPlaces(kw, type, currentCenter, radius, e)}
             >
               Redo Search
             </button>
             <FontAwesomeIcon icon="redo" className="redo-icon"/>
-          </div>
+          </div> */}
         </div>
         {!mapviewport.latitude ? 
         <div className="map-contn">
@@ -413,24 +235,38 @@ class ExploreMap extends Component {
             transitionDuration={0}
             transitionInterpolator={new LinearInterpolator()}
           >
-          { currentMapCenter && currentMapCenter.lat !== currentSearchCenter.lat && (<Marker 
+          { search.query.currentCenter && search.query.currentCenter.lat !== mapviewport.latitude && (
+          <Marker 
             className="current-pos-marker"
             latitude={mapviewport.latitude}
             longitude={mapviewport.longitude}>
-            {/* <FontAwesomeIcon icon="circle"/> */}
             <svg width="20" height="20" fill="#c4762d" stroke="#ffffff" strokeWidth="2">
               <circle cx="10" cy="10" r="7"/>
             </svg>
           </Marker>) }
-          { markers && markers.length > 0 && markers.map((marker,i)=>(
+          {search.businessResults && search.businessResults.length > 0 && search.businessResults.map((marker,i)=>(
+            <CustomPopup 
+              key={i}
+              popupId={i}
+              longitude={marker.location.lng} 
+              latitude={marker.location.lat} 
+              data={marker} 
+              selectedPopup={selectedMarker === i} 
+              offset={{x:-3,y:-40}}
+              size={'lg'}
+            />
+          ))}
+          { search.businessResults && search.businessResults.length > 0 && search.businessResults.map((marker,i)=>(
             <CustomMarker
               key={i}
               markerID={i}
               data={marker}
               offset={{x:-15,y:-30}}
-              latitude={marker.geometry.location.lat}
-              longitude={marker.geometry.location.lng}
-              onHoverMarker={() => console.log("Hover")}
+              latitude={marker.location.lat}
+              longitude={marker.location.lng}
+              selectedMarker={selectedMarker === i}
+              showMarkerNumber={true}
+              onHoverMarker={(index,e) => this.onSelectMarker(index,e)}
               onClickMarker={() => console.log("Click")}
             />
           ))}
@@ -441,7 +277,10 @@ class ExploreMap extends Component {
   }
 }
 const mapStateToProps = (state) => ({
-  app: state.app
+  app: state.app,
+  user: state.user,
+  search: state.search
 });
 
-export default connect(mapStateToProps, { setCurrentPath })(withRouter(ExploreMap));
+
+export default connect(mapStateToProps, { setCurrentPath, getSearchResults })(withRouter(ExploreMap));

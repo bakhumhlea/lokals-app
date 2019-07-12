@@ -41,49 +41,70 @@ export default class MiniMap extends Component {
   }
   componentDidMount() {
     const { kw, ct, lc } = this.props;
-    const { ty } = this.state;
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
         var location = {
           lat: position.coords.latitude,
           lng: position.coords.longitude
         };
-        this.setState({
-          mapviewport : {
-            ...this.state.mapviewport,
-            latitude: location.lat,
-            longitude: location.lng
-          },
-          cUserLc: {
-            lat: location.lat, 
-            lng: location.lng
-          },
-          cMapCen: {
-            lat: location.lat, 
-            lng: location.lng
-          },
-          cSearchCen: {
-            lat: location.lat, 
-            lng: location.lng
-          },
+        // console.log(kw);
+        // console.log(lc);
+        // console.log(ct);
+        Axios.get(`/api/business/querybusinesses/categories/${kw}/${lc.address}/${lc.type}/${ct}`)
+        .then(res => {
+          // console.log(res.data);
+          this.setState({
+            markers: [...res.data.businesses],
+            mapviewport : {
+              ...this.state.mapviewport,
+              latitude: res.data.map_center.lat,
+              longitude: res.data.map_center.lng
+            },
+            cUserLc: {
+              lat: location.lat, 
+              lng: location.lng
+            },
+            cMapCen: {
+              lat: res.data.map_center.lat, 
+              lng: res.data.map_center.lng
+            },
+            cSearchCen: {
+              lat: location.lat, 
+              lng: location.lng
+            },
+            kw: kw,
+            lc: lc,
+            ct: ct
+          })
         })
-        this.getNearUser(kw, {address:'your location',type:'none'}, location, ty, 1000 , false);
+        .catch(err => console.log({error: err}));
       });
     } else {
-      const clc = isEmpty(lc)?{address:'financial district',type:'neighborhood'}:lc;
-      this.getNearbyPlaces(kw, clc, ty, ct, 1000 , false);
+      this.setState({kw: kw, ct:this.props.ct, markers: this.props.markers})
     }
-    this.setState({kw: kw,ct:this.props.ct})
+    
   }
   componentDidUpdate(prevProps, prevState) {
     const { ct, kw, lc } = this.props;
-    const { ty } = this.state;
     const propsChange = prevProps.ct !==  ct ||
       prevProps.kw !==  kw ||
       prevProps.lc !==  lc;
-    if (propsChange) {
-      this.setState({kw: kw, ct: ct, lc: lc})
-      this.getNearbyPlaces(kw, lc, ty, ct, 1000, false)
+    if (propsChange && this.props.markers.length !== 0) {
+      console.log(this.props.cMapCen)
+      this.setState({
+        cMapCen: {
+          ...this.props.cMapCen
+        },
+        markers: this.props.markers,
+        mapviewport: {
+          ...this.state.mapviewport,
+          latitude: this.props.cMapCen.lat,
+          longitude: this.props.cMapCen.lng
+        },
+        kw: kw,
+        lc: lc,
+        ct: ct
+      })
     }
   }
   locateUserLocation(e) {
@@ -108,7 +129,20 @@ export default class MiniMap extends Component {
     params.ty = type;
     params.rad = radius || 1000;
     params.opn = opennow;
-    Axios.get(`/api/business/searchnearuser/${params.kw}/${params.ty}/${location.lat}/${location.lng}/${params.rad}/${params.opn}`)
+    console.log(this.props.markers);
+    if (this.props.markers.length > 0) {
+      console.log(this.props.markers);
+      this.setState({
+        lc: address,
+        markers: this.props.markers,
+        mapviewport: {
+          ...this.state.mapviewport,
+          latitude: this.props.markers[0].location.lat,
+          longitude: this.props.markers[0].location.lng
+        }
+      });
+    } else {
+      Axios.get(`/api/business/searchnearuser/${params.kw}/${params.ty}/${location.lat}/${location.lng}/${params.rad}/${params.opn}`)
       .then(res => {
         return this.setState({
           lc: address,
@@ -121,6 +155,7 @@ export default class MiniMap extends Component {
         });
       })
       .catch(err => console.log({error:'Error!'}))
+    }
   }
   getNearbyPlaces(keyword, location, type, city, radius, opennow) {
     // console.log(type)
@@ -178,8 +213,9 @@ export default class MiniMap extends Component {
     });
   }
   render() {
-    const { mapviewport, kw, lc, ct, ty, opennow, 
-      markers, cMapCen, cSearchCen, searchRadius, selectedMarker } = this.state;
+    const { mapviewport,kw, lc, ct, ty, opennow, 
+      markers, cMapCen, cSearchCen, searchRadius, selectedMarker} = this.state;
+    // const { kw, lc, ct } = this.props;
     return (
       <div className="mdl-bound mini-map">
         <h5 className="mdl-tt flx al-c jt-spbt">
@@ -190,16 +226,16 @@ export default class MiniMap extends Component {
           <div className="flx al-c">
             <span className="lk-btn btn-war sm tx-cap mr-2">{makeTitle(ct)}</span>
             <span className="lk-btn-ol sm tx-cap mr-2">{makeTitle(kw)}</span>
-            { cMapCen && cMapCen.lat === cSearchCen.lat && (<span className="lk-btn-ol sm tx-cap">{makeTitle(lc.address)}</span>)}
+            {(<span className="lk-btn-ol sm tx-cap">{makeTitle(lc.address)}</span>)}
           </div>
         </h5>
         <div className="mdl">
-          { cMapCen && cMapCen.lat !== cSearchCen.lat && (
+          {/* { cMapCen && cMapCen.lat !== cSearchCen.lat && (
             <div className="lk-btn sm redo-minimap"
               onClick={(e)=>this.getNearUser(kw,{address:'financial district',type: 'neighborhood'}, {lat: mapviewport.latitude,lng: mapviewport.longitude}, ty, searchRadius , opennow, e)}>
               Redo Search
             </div>
-          )}
+          )} */}
           {cMapCen && (<div className="lk-btn sm center-map"
             onClick={(e)=>this.locateUserLocation(e)}>
               <svg width="20" height="20" fill="transparent">
@@ -231,21 +267,20 @@ export default class MiniMap extends Component {
               transitionDuration={50}
               transitionInterpolator={new LinearInterpolator()}
             >
-              { cMapCen && cMapCen.lat !== cSearchCen.lat && (<Marker 
+              {/* { cMapCen.lat && (<Marker 
                 className="current-pos-marker"
                 latitude={mapviewport.latitude}
                 longitude={mapviewport.longitude}>
-                {/* <FontAwesomeIcon icon="circle"/> */}
                 <svg width="20" height="20" fill="#c4762d" stroke="#ffffff" strokeWidth="2">
                   <circle cx="10" cy="10" r="7"/>
                 </svg>
-              </Marker>) }
+              </Marker>)} */}
               {markers && markers.length > 0 && markers.map((marker,i)=>(
                 <CustomPopup 
                   key={i}
                   popupId={i}
-                  longitude={marker.geometry.location.lng} 
-                  latitude={marker.geometry.location.lat} 
+                  longitude={marker.location.lng} 
+                  latitude={marker.location.lat} 
                   data={marker} 
                   selectedPopup={selectedMarker === i} 
                   offset={{x:-3,y:-40}}
@@ -259,8 +294,8 @@ export default class MiniMap extends Component {
                   showMarkerNumber={true}
                   data={marker}
                   offset={{x:-15,y:-30}}
-                  latitude={marker.geometry.location.lat}
-                  longitude={marker.geometry.location.lng}
+                  latitude={marker.location.lat}
+                  longitude={marker.location.lng}
                   onHoverMarker={(index,e) => this.onHoverMarker(index,e)}
                   onClickMarker={() => console.log("Click")}
                 />

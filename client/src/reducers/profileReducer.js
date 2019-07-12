@@ -3,7 +3,9 @@ import TYPES from '../actions/types';
 
 const INITIAL_STATE = {
   profile: {},
-  isAdmin: false
+  isAdmin: false,
+  recentKw: [],
+  pref: ['Thai', 'Japanese', 'Wine', 'Italian', 'Coffee', 'Salad']
 };
 
 export default function(state = INITIAL_STATE, action) {
@@ -23,6 +25,11 @@ export default function(state = INITIAL_STATE, action) {
         ...state,
         isAdmin: action.payload
       };
+    case TYPES.SAVE_RECENT_KEYWORD:
+      return {
+        ...state,
+        recentKw: [action.payload, ...state.recentKw]
+      }
     default:
       return state;
   }

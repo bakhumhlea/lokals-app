@@ -170,7 +170,7 @@
   border-radius: 10px;
   margin: 5px 0;
 }
-.img-col {
+.img {
   width: 100px;
   height: 100px;
   overflow: hidden;
@@ -188,7 +188,7 @@
   margin-bottom: 4px;
 }
 .info-col .rating {
-  font-size: 0.9em;
+  font-size: 1em;
   margin-bottom: 4px;
 }
 .info-col .rating .src {
@@ -200,6 +200,8 @@
 }
 .info-col .address {
   font-size: 0.8em;
+  margin-bottom: 3px;
+
 }
 /* map style */
 .map-container-empty {
@@ -236,7 +238,7 @@
   color: black;
   border: 1px solid rgba(0,0,0,0.2);
   border-radius: 10px;
-  padding: 8px 14px 8px 14px;
+  padding: 12px 16px;
   background: white;
   box-shadow: 0 0 8px 0 rgba(75, 75, 75, 0.2);
   transform: translate(-50%, -100%);
@@ -245,15 +247,15 @@
   opacity: 1;
   white-space: normal;
 }
-.custom-popup-container * {
-  margin: 0;
-  white-space: nowrap;
-  font-family: 'Poppins', sans-serif;
+.custom-popup-container.lg {
+  align-items: flex-start;
+  padding: 12px 20px;
+  border-radius: 16px;
+}
+.custom-popup-container .info {
+  width: 100%;
 }
 .custom-popup-container .number {
-  /* display: flex;
-  justify-content: center;
-  align-items: center; */
   font-weight: 600;
   font-size: 1.4em;
   text-align: center;
@@ -269,26 +271,51 @@
   background-color: #0078af;
   box-shadow: 0 0 8px 0 rgba(75, 75, 75, 0.2);
 }
+.custom-popup-container.lg .number {
+  margin-right: 16px;
+}
 .custom-popup-container .name {
-  max-height: 2.8em;
+  max-height: 2.6em;
   font-size: 1.2em;
   font-weight: 600;
+  line-height: 1.2em;
   text-transform: uppercase;
   white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.custom-popup-container .rating {
-  margin-bottom: 3px;
-}
-.custom-popup-container .rating .stars {
-  color: rgb(13, 202, 98);
-  font-size: 1em;
+.custom-popup-container.lg .name {
+  max-height: 2.8em;
+  font-size: 1.6em;
+  line-height: 1.3em;
+  font-weight: 600;
 }
 .custom-popup-container .address {
+  font-size: 1.1em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-weight: 500;
+  margin: 3px 0;
+  color: #004852;
+}
+.custom-popup-container.lg .address {
+  font-size: 1.3em;
+  margin: 5px 0;
+}
+.custom-popup-container .category,
+.custom-popup-container .rating {
+  text-transform: capitalize;
+  font-size: 1.1em;
+  font-weight: 500;
+  color: #004852;
+}
+.custom-popup-container.lg .category,
+.custom-popup-container.lg .rating {
+  text-transform: capitalize;
+  font-size: 1.3em;
+  font-weight: 600;
+  color: #004852;
 }
 .custom-popup-container .image-thumbnail {
   position: relative;

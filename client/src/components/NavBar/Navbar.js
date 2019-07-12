@@ -77,7 +77,7 @@ class Navbar extends Component {
   onSelectCity(e,value) {
     e.preventDefault();
     this.setState({ local: { city: value}, selectingCity:false })
-    this.props.setLocal({ city: value});
+    this.props.setLocal({ city: value });
   }
   onChange(e) {
     e.preventDefault();

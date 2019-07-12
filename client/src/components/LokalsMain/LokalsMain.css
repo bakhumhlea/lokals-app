@@ -77,8 +77,27 @@
 }
 .feed-content.result {
   padding-top: 10px;
-  background: #e2fffc;
+  background: #ffffff;
   border-bottom: 1px solid #c9c9c9;
+}
+.feed-content.result .result-text {
+  position: relative;
+  margin-bottom: 20px;
+  height: 1em;
+}
+.feed-content.result .result-number {
+  display: inline-block;
+  font-size: 1.5em;
+  font-weight: 700;
+  margin-right: 5px;
+}
+.dark-th .feed-content.result {
+  background: #152b2f;
+  border-bottom: 1px solid #3d6e77;
+}
+.feed-content.result .no-result {
+  margin: 60px auto 80px auto;
+  font-weight: 600;
 }
 .feed-header .group {
   width: 100%;

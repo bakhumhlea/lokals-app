@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux';
+
 import Axios from 'axios';
 
 // import { capitalize, makeTitle } from '../../../util/stringFormat';
@@ -7,6 +9,7 @@ import isEmpty from '../../../util/is-empty'
 import './RowContent.css';
 // import ContentCard from './ContentCard';
 import LokalsCard from './LokalsCard';
+import { getSearchResults } from '../../../actions/searchActions';
 
 class RowContent extends Component {
   state = {
@@ -20,7 +23,13 @@ class RowContent extends Component {
   componentDidMount() {
     const { searchInput, ct, autoMount } = this.props;
     if (autoMount) {
-      this.queryBusinesses(searchInput.kw,searchInput.lc,ct);
+      Axios.get(`/api/business/querybusinesses/categories/${searchInput.kw}/${searchInput.lc.address}/${searchInput.lc.type}/${ct}`)
+        .then(res => {
+          this.setState({
+            data: res.data.businesses
+          })
+        })
+        .catch(err => { if (err) console.log({error: err.response})});
     } else {
       this.setState({
         data: this.props.data
@@ -30,23 +39,18 @@ class RowContent extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.ct !== this.props.ct) {
       const { ct, clc, ckw } = this.props;
-      this.queryBusinesses(ckw,clc,ct);
+      Axios.get(`/api/business/querybusinesses/categories/${ckw}/${clc.address}/${clc.type}/${ct}`)
+        .then(res => {
+          this.setState({
+            data: res.data.businesses
+          })
+        })
+        .catch(err => { if (err) console.log({error: err.response})});
     } else if (prevProps.data !== this.props.data) {
       this.setState({
         data: this.props.data
       });
     }
-  }
-  queryBusinesses(keyword, location, city) {
-    Axios.get(`/api/business/querybusinesses/categories/${keyword.join(',')}/${location.address}/${location.type}/${city}`)
-      .then(res => {
-        return this.setState({
-          searchInput: keyword,
-          data: res.data, 
-          searchResults: res.data
-        });
-      })
-      .catch(err => { if (err) console.log({error: err.response})});
   }
   
   getNearbyPlaces(input, city, radius, opennow) {
@@ -83,13 +87,14 @@ class RowContent extends Component {
     return (
       <div className="section-container">
         <div className="section-content" style={{transform: `translateX(${this.state.translate}%)`}}>
-          {data.map((d, i) => (
+          {data && data.map((d, i) => (
             <span style={{width: `${100/col}%`}} key={i} className="chain-container">
               <LokalsCard
                 index={i}
                 data={d}
                 following={following}
                 onDark={onDark}
+                turnOffImg={false}
               />
             </span>
           ))}
@@ -98,11 +103,11 @@ class RowContent extends Component {
           {/* <span onClick={(e)=>this.onNavigate(e, 'left')} className={moveRight===0?"direction-btn hidden":"direction-btn"}>
             <FontAwesomeIcon icon="arrow-left"/>
           </span> */}
-          <span className="dot-navigator">
+          { data && (<span className="dot-navigator">
             {Array.from('d'.repeat(data.length)).map((classname, i) => (
               <div className={`${classname} ${i >= hoverIndex?'':'scaled'}`} key={i}></div>
             ))}
-          </span>
+          </span>)}
           {/* <span onClick={(e)=>this.onNavigate(e, 'right')} className={moveRight+col===data.length?"direction-btn hidden":"direction-btn"}>
             <FontAwesomeIcon icon="arrow-right"/>
           </span> */}
@@ -111,4 +116,9 @@ class RowContent extends Component {
     )
   }
 }
-export default RowContent;
+
+const mapStateToProps = state => ({
+  search: state.search
+})
+
+export default connect( mapStateToProps, { getSearchResults })(RowContent);

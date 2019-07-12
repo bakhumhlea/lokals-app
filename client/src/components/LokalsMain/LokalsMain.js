@@ -12,6 +12,7 @@ import Clock from './sub/Clock';
 import MiniMap from './sub/MiniMap';
 
 import './LokalsMain.css'
+import { getSearchResults } from '../../actions/searchActions';
 
 const DUMMY_USER = {
   pref: {
@@ -39,11 +40,11 @@ class LokalsMain extends Component {
     lc: '',
     ct: 'san francisco',
     opn: false,
-    searchResults: [],
-    currentKw: 'all',
+    searchResults: null,
+    currentKw: 'wine',
     currentLc: {
-      address: 'Financial District',
-      type: 'neighborhood'
+      address: 'all',
+      type: 'none'
     },
     userprefLc: null,
   }
@@ -62,6 +63,7 @@ class LokalsMain extends Component {
   }
   
   queryBusinesses(keyword, location, city) {
+    this.props.getSearchResults(keyword, location, city);
     Axios.get(`/api/business/querybusinesses/categories/${keyword}/${location.address}/${location.type}/${city}`)
       .then(res => {
         return this.setState({
@@ -120,7 +122,8 @@ class LokalsMain extends Component {
   }
   render() {
     const { darkTheme, kw, lc, ct, opn, searchResults, currentKw, currentLc } = this.state;
-    const { app } = this.props;
+    const { app, search } = this.props;
+    // console.log(search);
     var keywords = DUMMY_USER.pref.kws;
     var locations = DUMMY_USER.pref.areas;
     return (
@@ -138,12 +141,13 @@ class LokalsMain extends Component {
             onSearch={(e)=>this.onSearch(e)}
           />
           <div className="lokals-feed">
-            { searchResults.length > 0 && (
+            { (search.businessResults) && (
               <div className="feed-content pd-common result">
                 <div className="comm-feature">
+                  {search.businessResults.length > 0 ? (
                   <div className="mdl-bound sugg-list">
                     <h5 className="mdl-tt flx al-c">
-                      <span className="mr-3">{`${searchResults.length} Results for ${currentKw}`}</span>
+                      <span className="mr-3 result-text"><span className="result-number">{search.businessResults.length}</span>{` results for "${currentKw}"`} {currentLc.address!=='all' && ` in "${currentLc.address}"`}</span>
                       <span className="lk-btn btn-war sm tx-cap mr-2">{currentLc.address}</span>
                       <span className="lk-btn-ol sm tx-cap mr-2">{currentKw}</span>
                     </h5>
@@ -153,10 +157,14 @@ class LokalsMain extends Component {
                         ct={app.local.city}
                         ckw={currentKw}
                         clc={currentLc}
-                        data={searchResults}
+                        data={search.businessResults}
                       />
                     </div>
-                  </div>
+                  </div>):(
+                    <div className="mdl-bound sugg-list flx al-c jt-c">
+                      <h5 className="no-result"><span>{`No Results for "${currentKw}"`} {currentLc.address!=='all' && ` in ${currentLc.address}`}</span></h5>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -178,9 +186,11 @@ class LokalsMain extends Component {
                   city={'san francisco'}
                 />
                 <MiniMap 
+                  markers={search.businessResults}
                   kw={currentKw}
                   lc={currentLc}
                   ct={app.local.city}
+                  cMapCen={search.query.currentCenter}
                 />
               </div>
               <div className="comm-feature">
@@ -305,7 +315,8 @@ LokalsMain.propTypes = {
 
 var mapStateToProps = state => ({
   app: state.app,
-  user: state.user
+  user: state.user,
+  search: state.search
 })
 
-export default connect( mapStateToProps, {})(LokalsMain);
+export default connect( mapStateToProps, { getSearchResults })(LokalsMain);

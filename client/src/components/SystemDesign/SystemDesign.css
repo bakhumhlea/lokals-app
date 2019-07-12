@@ -942,6 +942,9 @@ ul.inl-contn li {
 .flx.al-en {
   align-items: flex-end;
 }
+.flx.jt-c {
+  justify-content: center;
+}
 .flx.jt-fls {
   justify-content: flex-start;
 }

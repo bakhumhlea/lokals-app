@@ -30,7 +30,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  font-size: 0.9em;
+  font-size: 1em;
   padding: 15px 0 15px 0;
   border-bottom: 1px solid rgba(89, 89, 89, 0.2);
   margin-bottom: 15px;
@@ -39,13 +39,14 @@
   color: #23c96d;
   font-size: 1.4em;
   font-weight: 500;
-  margin-right: 5px;
+  margin-right: 3px;
 }
 .results-title {
   font-family: 'rubik', sans-serif;
 }
 .results-keyword {
   text-transform: capitalize;
+  font-weight: 600;
 }
 .sort-btn {
   display: flex;
@@ -57,6 +58,7 @@
   padding: 0 5px;
 }
 .result-card {
+  cursor: pointer;
   position: relative;
   padding:  0 0 15px 0;
   border-bottom: 1px solid rgba(89, 89, 89, 0.2);
@@ -66,16 +68,21 @@
   display: flex;
   justify-content: flex-start;
 }
-.obj-img {
+.result-card .obj-img {
   position: relative;
   height: 150px;
   width: 100%;
-  border-radius: 6px;
+  border-radius: 14px;
   margin-bottom: 10px;
-  background-color: #223a3f;
+  border: 3px solid #ffffff;
+  background-color: #ccecec;
+  background-position: center center;
   overflow: hidden;
 }
-.obj-img img {
+.result-card:hover .obj-img {
+  border: 3px solid #18be70;
+}
+.result-card .obj-img img {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -89,9 +96,10 @@
 }
 .obj-info {
   position: relative;
-  display: flex;
+  /* display: flex; */
   justify-content: space-between;
   padding: 0 6px;
+  font-family: 'Poppins', sans-serif;
 }
 .result-card.sm .obj-info {
   flex-direction: column;
@@ -101,8 +109,15 @@
   margin-bottom: 0px;
 }
 .obj-title .name {
-  font-size: 1.2em;
-  font-weight: 600;
+  /* font-family: 'R', sans-serif; */
+  text-transform: uppercase;
+  font-size: 1em;
+  line-height: 1.2em;
+  max-height: 2.4em;
+  font-weight: 700;
+  display: block;
+  width: 80%;
+  margin-bottom: 4px;
 }
 .result-card.sm .name {
   font-size: 1em;
@@ -111,7 +126,7 @@
 .obj-title .type,
 .obj-title .rating {
   font-size: 1.1em;
-  font-weight: 300;
+  font-weight: 500;
 }
 .result-card.sm .type,
 .result-card.sm .rating {
@@ -120,7 +135,8 @@
 .obj-detail,
 .obj-location {
   font-size: 0.9em;
-  margin-bottom: 0px;
+  margin-bottom: 4px;
+  font-weight: 500;
   /* color: rgb(221, 221, 221); */
 }
 .result-card.sm .obj-detail,
@@ -130,16 +146,22 @@
 }
 .obj-detail .price,
 .obj-detail .cuisine {
-  font-weight: 500;
+  font-weight: 600;
   margin: 0;
+  text-transform: capitalize;
 }
-.obj-location .address {
-  font-size: 0.9em;
+.obj-location .address,
+.obj-location .rating {
+  font-weight: 600;
+  font-size: 1em;
 }
 .contn.right {
+  position: absolute;
+  top: 0;
+  right: 10px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 .result-card.sm .contn.right {
   display: flex;
@@ -156,6 +178,9 @@
   text-align: right;
   min-width: 70px;
 }
-.btn-list .lk-btn-ol.sm {
-  padding: 2px 9px;
+.btn-list .lk-tag-btn.sm {
+  padding: 1px 10px;
+  border-width: 1px;
+  font-weight: 500;
+  margin: 0;
 }

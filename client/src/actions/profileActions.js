@@ -32,6 +32,12 @@ export const clearProfile = () => {
     payload: {}
   }
 }
+export const saveRecentSearchKeyword = (keyword) => {
+  return {
+    type: TYPES.SAVE_RECENT_KEYWORD,
+    payload: keyword
+  }
+}
 export const saveToCollections = id => dispatch => {
   Axios
     .post(`/api/profile/collections`, { business_id: id })

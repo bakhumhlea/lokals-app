@@ -475,6 +475,15 @@ router.get('/getcoordinates/:city/:address',(req,res)=>{
     .catch(err => console.log(err))
 });
 
+function calcMapCenter(markers) {
+  var latitude = markers.map(m=>m.location.lat).reduce((a,v)=> a+v, 0);
+  var longitude = markers.map(m=>m.location.lng).reduce((a,v)=> a+v, 0);
+  return {
+    lat: latitude / markers.length,
+    lng: longitude / markers.length
+  }
+}
+
 router.get('/querybusinesses/categories/:keyword/:address/:key/:city/', (req, res) => {
   
   const { keyword, address, key, city } = req.params;
@@ -495,7 +504,10 @@ router.get('/querybusinesses/categories/:keyword/:address/:key/:city/', (req, re
       .and([{'address.neighborhood':lc}])
       .then(business => {
         console.log(business);
-        return res.json(business);
+        return res.json({
+          businesses: business,
+          map_center: calcMapCenter(business)
+        });
       })
       .catch(err => res.status(400).json(err));
   } else {
@@ -504,7 +516,10 @@ router.get('/querybusinesses/categories/:keyword/:address/:key/:city/', (req, re
       .or([{'business_name':kw}, {'categories.keyword': kw}])
       .then(business => {
         // console.log(business);
-        return res.json(business);
+        return res.json({
+          businesses: business,
+          map_center: calcMapCenter(business)
+        });
       })
       .catch(err => res.status(400).json(err));
   };
