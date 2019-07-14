@@ -1,6 +1,8 @@
 
 # [LOKALS](https://young-sea-81536.herokuapp.com)
+[![kitchen-door](https://img.shields.io/badge/Lokals-v1.0.0-brightgreen.svg)](http://kitchendoors.netlify.com/) ![](https://img.shields.io/badge/license-MIT-blue.svg)
 
+Visit site: [lokals.com](https://young-sea-81536.herokuapp.com)
 
 ## About Lokals
 ### What is Lokals?
@@ -18,19 +20,19 @@ The prototype used a few APIs from the third party; it used **[Google Geolocatio
 ### Technologies used
 Lokals application written in **JavaScript** using **React** and **Redux** library on top of NodeJS backend. Store the user and business data on a **NoSQL** database, **MongoDB**.
 
-## Example
-### Feeds
-![enter image description here](https://lh3.googleusercontent.com/t5x8mvKCC6XPABL7Yg19-bdc-7rps2IrLQRyLlg-vDTTCNMRW1fdD6GawYUXYgq-AXR1nyTCrQY)
-<p align="left"><small>Fig 1 - Feeds</small></a>
+### Screenshot
 
-![enter image description here](https://lh3.googleusercontent.com/EJYQUUK1AQrkQv4ZMCZ-U7xW36jioiyq6aGulhRYKJI_IL5hqpfGI_ieNgv9Olj4naIj6zemAMs "Search results")
-<p align="left"><small>Fig 2 - Search results</small></a></p>
+![lokals feeds](https://lh3.googleusercontent.com/4NBLbuxpDctOHOyXXsBD7WSuXoHIozNGqlkA5vnSPm2em_rZbVurUJA1xjarRtNOcbN8JP3rNqw)
+<p align="left"><small>(1) Lokals feeds</small></a>
 
-### Explorer
+![results](https://lh3.googleusercontent.com/-GeCiri0oczzYdS3Rw0RcZ-qjjWt3oamfdtBEv8LAfOb246tLw7SIlnaljIzjMNvZWf0cF2V-YA)
+<p align="left"><small>(2) Search results</small></a></p>
 
-![enter image description here](https://lh3.googleusercontent.com/RMeywY0uZD7q0jKRCdrzNJ8FsVbzKswhDxE4YiUwB-4ZhsLUM3fM-rv_2CQ-BuApTTnpncQbelg)
-<p align="left"><small>Fig 3 - Search results</small></a></p>
+![map explorer](https://lh3.googleusercontent.com/Cc99Kpb-qSZWZT5f6FUFZwYcy47ztM8NxpDfWkwigtKkC6NieXm7yK7pm-u40t73tFYVxxMKENM)
+<p align="left"><small>(3) Lokals map explorer</small></a></p>
 
-### Dark Mode
-![enter image description here](https://lh3.googleusercontent.com/0kLhLesRz8WQ3diVuClkFde13sPJ6x_jrFfsCvT7K1coS72fj0m4YVzdoPGlcsOy-FRjZYL359o "Lokals Dark Mode")
-<p align="left"><small>Fig 4 - Lokals dark mode</small></a></p>
+![dark mode](https://lh3.googleusercontent.com/SYX_eo01dSuFn4_XmAM0FvtCfGI_IXWEeiff-rzNFdvgssB1CbtZLNfGD7Qm4cjUy4xKeFyhtzs)
+<p align="left"><small>(4) Dark mode</small></a></p>
+
+### Version
+v1.0.0
