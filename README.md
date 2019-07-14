@@ -20,6 +20,8 @@ The prototype used a few APIs from the third party; it used **[Google Geolocatio
 ### Technologies used
 Lokals application written in **JavaScript** using **React** and **Redux** library on top of NodeJS backend. Store the user and business data on a **NoSQL** database, **MongoDB**.
 
+Deployed on [**Heroku**](https://www.heroku.com/home)
+
 ### Screenshot
 
 ![lokals feeds](https://lh3.googleusercontent.com/4NBLbuxpDctOHOyXXsBD7WSuXoHIozNGqlkA5vnSPm2em_rZbVurUJA1xjarRtNOcbN8JP3rNqw)
