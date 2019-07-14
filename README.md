@@ -9,7 +9,7 @@ Visit site: [lokals.com](https://young-sea-81536.herokuapp.com)
 
 **[Lokals](https://young-sea-81536.herokuapp.com)**, A social-advertising platform for small businesses including restaurants, coffee shops, boutiques to handicraft stores, aims to be a place for businesses to connect with their customers, through its activities.  
   
-### Survices
+### Services
 Lokals provide service to both businesses and end-users. The business can create its profile, write posts, schedule events, and publish them on the platform where the end-users can browse through, exploring the new experiences nearby.
 
 Lokals encourages the business owners can editing their business profile page, posting event advertises, publish stories, or announcement on profile pages, increasing their brand awareness, and attract new customer. The business customer or anyone can view post and on their newsfeed or directly on business pages. 
