@@ -1,6 +1,6 @@
 
 # [LOKALS](https://young-sea-81536.herokuapp.com)
-[![kitchen-door](https://img.shields.io/badge/Lokals-v1.0.0-brightgreen.svg)](http://kitchendoors.netlify.com/) ![](https://img.shields.io/badge/license-MIT-blue.svg)
+[![kitchen-door](https://img.shields.io/badge/Lokals-v1.0.0-brightgreen.svg)](https://young-sea-81536.herokuapp.com) ![](https://img.shields.io/badge/license-MIT-blue.svg)
 
 Visit site: [lokals.com](https://young-sea-81536.herokuapp.com)
 
@@ -14,7 +14,7 @@ Lokals provide service to both businesses and end-users. The business can create
 
 Lokals encourages the business owners can editing their business profile page, posting event advertises, publish stories, or announcement on profile pages, increasing their brand awareness, and attract new customer. The business customer or anyone can view post and on their newsfeed or directly on business pages. 
 
-### API we used
+### Third party APIs
 The prototype used a few APIs from the third party; it used **[Google Geolocation](https://developers.google.com/maps/documentation/geolocation/intro)** and **[Google Places](https://developers.google.com/places/web-service/intro)** for searching businesses and matched the results with the posts and activities record in its database, then return them to the end-user. Its also used **[Mapbox](https://www.mapbox.com/)** as its main map engine to display the results when the user finds something base on location or visually pick from the map.
 
 ### Technologies used
